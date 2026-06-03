@@ -1,0 +1,8 @@
+{
+  "name": "AlpharKing Blockchain Oracle",
+  "description": "A comprehensive Blockchain Mastery platform for Africa, featuring an LMS, event management, and enterprise consulting portal, powered by Gemini AI for personalized learning paths.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

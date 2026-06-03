@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- PWA Manifest & iOS Meta -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Blo|kChain Oracle">
+  <meta name="application-name" content="Blo|kChain Oracle">
+  <meta name="msapplication-TileColor" content="#111827">
+  <meta name="msapplication-tap-highlight" content="no">
+  
+  <title>Blo|<Chain◯racle - Enterprise Platform</title>
+  
+  <!-- Favicon from /Logo/favicon/ -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/Logo/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Logo/favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/Logo/favicon/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/Logo/favicon/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/Logo/favicon/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/Logo/favicon/apple-touch-icon.png">
+  <link rel="apple-touch-startup-image" href="/Logo/favicon/apple-touch-icon.png">
+  <link rel="shortcut icon" href="/Logo/favicon/favicon.ico">
+  
+  <!-- Fonts: Montserrat for logo typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <script>
+    (function() {
+      const CACHE_VERSION_KEY = 'sw-cache-version';
+      const CURRENT_CACHE_VERSION = 'v2.0.2';
+      const urlParams = new URLSearchParams(window.location.search);
+      const isRefresh = urlParams.has('_refresh');
+      
+      if (isRefresh) {
+        console.log('[Cache] Forced refresh detected - clearing session storage');
+        sessionStorage.clear();
+        localStorage.setItem(CACHE_VERSION_KEY, CURRENT_CACHE_VERSION);
+        localStorage.setItem('last-refresh', Date.now().toString());
+        
+        if (window.history && window.history.replaceState) {
+          const cleanUrl = window.location.pathname + window.location.hash;
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+      }
+      
+      // Note: Version checking is handled by cacheManager.ts in App.tsx
+      // to ensure thorough cache clearing before updating the version key.
+      void document.documentElement.offsetHeight;
+    })();
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
