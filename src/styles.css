@@ -778,3 +778,127 @@ body {
     break-inside: avoid;
   }
 }
+
+/* ============ SUPPORT PAGE - MOBILE TAB SWITCHER ============ */
+.support-tab-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex-shrink: 0;
+  font-family: monospace;
+}
+
+@media (min-width: 640px) {
+  .support-tab-bar {
+    flex-wrap: nowrap;
+  }
+}
+
+@media (min-width: 1024px) {
+  .support-tab-bar {
+    display: none;
+  }
+}
+
+.support-tab-btn {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.support-tab-btn--active {
+  background-color: var(--color-primary);
+  color: #fff;
+  font-weight: 800;
+  border-color: var(--color-primary);
+}
+
+.support-tab-btn--inactive {
+  background-color: transparent;
+  color: var(--color-text-muted);
+  border-color: transparent;
+}
+
+.support-tab-btn--inactive:hover {
+  color: var(--color-text);
+}
+
+.support-tab-badge {
+  font-size: 10px;
+  padding: 0 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-weight: 900;
+  line-height: 1.6;
+}
+
+.support-tab-badge--active {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #fff;
+}
+
+.support-tab-badge--inactive {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.support-tab-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  width: 6px;
+  height: 6px;
+}
+
+.support-tab-dot-ping {
+  position: absolute;
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  opacity: 0.75;
+  animation: support-ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.support-tab-dot-solid {
+  position: relative;
+  display: inline-flex;
+  border-radius: 50%;
+  width: 6px;
+  height: 6px;
+}
+
+.support-tab-dot--workspace {
+  background-color: #fff;
+}
+
+.support-tab-dot--primary {
+  background-color: var(--color-primary);
+}
+
+@keyframes support-ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}

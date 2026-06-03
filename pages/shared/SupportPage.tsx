@@ -341,42 +341,28 @@ const SupportPage: React.FC<SupportPageProps> = ({ user }) => {
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 flex flex-col lg:grid lg:grid-cols-12 gap-4 overflow-hidden min-h-0">
 
-        <div className="lg:hidden flex items-center justify-between p-1 bg-surface border border-border rounded-xl mb-1 flex-wrap sm:flex-nowrap gap-1 shrink-0 font-mono">
+        <div className="support-tab-bar">
           <button
             onClick={() => setMobileActiveTab("queue")}
-            className={`flex-1 py-2.5 px-3 rounded-lg text-[11px] font-bold tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-              mobileActiveTab === "queue"
-                ? "bg-primary text-white font-extrabold border border-primary"
-                : "bg-transparent text-text-muted hover:text-text border border-transparent"
-            }`}
+            className={`support-tab-btn ${mobileActiveTab === "queue" ? "support-tab-btn--active" : "support-tab-btn--inactive"}`}
           >
             <Archive className="w-3.5 h-3.5" />
             <span>QUEUE</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-black ${
-              mobileActiveTab === "queue" ? "bg-black/20 text-white" : "bg-surface border border-border text-text-muted"
-            }`}>
+            <span className={`support-tab-badge ${mobileActiveTab === "queue" ? "support-tab-badge--active" : "support-tab-badge--inactive"}`}>
               {tickets.length}
             </span>
           </button>
 
           <button
             onClick={() => setMobileActiveTab("workspace")}
-            className={`flex-1 py-2.5 px-3 rounded-lg text-[11px] font-bold tracking-wider transition-all flex items-center justify-center gap-1.5 relative cursor-pointer ${
-              mobileActiveTab === "workspace"
-                ? "bg-primary text-white font-extrabold border border-primary"
-                : "bg-transparent text-text-muted hover:text-text border border-transparent"
-            }`}
+            className={`support-tab-btn ${mobileActiveTab === "workspace" ? "support-tab-btn--active" : "support-tab-btn--inactive"}`}
           >
             <LifeBuoy className="w-3.5 h-3.5" />
             <span>WORKSPACE</span>
             {(selectedTicket || isCreatingNewTicket) && (
-              <span className="absolute top-1 right-1 flex h-1.5 w-1.5">
-                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                  mobileActiveTab === "workspace" ? "bg-text-inverse" : "bg-primary"
-                }`}></span>
-                <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${
-                  mobileActiveTab === "workspace" ? "bg-text-inverse" : "bg-primary"
-                }`}></span>
+              <span className="support-tab-dot">
+                <span className={`support-tab-dot-ping ${mobileActiveTab === "workspace" ? "support-tab-dot--workspace" : "support-tab-dot--primary"}`}></span>
+                <span className={`support-tab-dot-solid ${mobileActiveTab === "workspace" ? "support-tab-dot--workspace" : "support-tab-dot--primary"}`}></span>
               </span>
             )}
           </button>
