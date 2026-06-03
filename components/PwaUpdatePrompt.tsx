@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
-import { Button } from '@/components/ui/button';
 import { RefreshCw, X } from 'lucide-react';
 
 const PwaUpdatePrompt: React.FC = () => {
@@ -67,21 +66,22 @@ const PwaUpdatePrompt: React.FC = () => {
 
         <div className="flex items-center gap-3">
           {needRefresh && (
-            <Button 
-              onClick={() => updateServiceWorker(true)}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium flex items-center justify-center gap-2 py-6 rounded-xl shadow-lg shadow-indigo-500/20"
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); updateServiceWorker(true); }}
+              className="flex-1 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-medium inline-flex items-center justify-center gap-2 py-6 px-6 rounded-xl shadow-lg shadow-indigo-500/20 border-none cursor-pointer text-sm transition-all select-none"
             >
               <RefreshCw className="w-4 h-4" />
               Refresh Now
-            </Button>
+            </button>
           )}
-          <Button 
-            variant="outline"
-            onClick={close}
-            className="flex-1 border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white py-6 rounded-xl transition-all"
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); close(); }}
+            className="flex-1 border border-slate-700 bg-transparent text-slate-300 hover:bg-slate-800 hover:text-white py-6 px-6 rounded-xl inline-flex items-center justify-center gap-2 cursor-pointer text-sm transition-all select-none"
           >
             {needRefresh ? 'Later' : 'Dismiss'}
-          </Button>
+          </button>
         </div>
       </div>
     </div>
