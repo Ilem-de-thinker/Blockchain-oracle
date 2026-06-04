@@ -23,6 +23,7 @@ export interface User {
   active_referral_code?: string;
   tutor_rating?: number | null;
   student_rating?: number | null;
+  user_category?: 'user' | 'nysc' | string | null;
 }
 
 export interface UserListResponse {
@@ -66,6 +67,7 @@ const normalizeUser = (raw: any): User => {
     active_referral_code: raw?.active_referral_code,
     tutor_rating: raw?.tutor_rating ?? null,
     student_rating: raw?.student_rating ?? null,
+    user_category: raw?.user_category ?? null,
   };
 };
 
@@ -107,6 +109,7 @@ export interface UpdateUserData {
   role?: 'USER' | 'TUTOR' | 'ADMIN' | 'SUPER_ADMIN';
   is_active?: boolean;
   can_verify?: boolean;
+  user_category?: 'user' | 'nysc';
 }
 
 export interface CreateUserData {

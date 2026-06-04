@@ -33,6 +33,7 @@ import {
   ChevronRight,
   Palette,
   Headphones,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -56,6 +57,7 @@ const navItems: NavItem[] = [
     path: '/admin/user-management',
     children: [
       { label: 'All Users', icon: Users, path: '/admin/users' },
+      { label: 'NYSC Enrollment', icon: ShieldCheck, path: '/admin/users/nysc-enrollment' },
     ]
   },
   {
@@ -123,6 +125,7 @@ const superAdminNavItems: NavItem[] = [
     children: [
       { label: 'All Users', icon: Users, path: '/super-admin/users' },
       { label: 'Create User', icon: Users, path: '/super-admin/users/create' },
+      { label: 'NYSC Enrollment', icon: ShieldCheck, path: '/super-admin/users/nysc-enrollment' },
     ]
   },
   { label: 'Roles', icon: Users, path: '/super-admin/roles' },

@@ -21,8 +21,8 @@ const RegisterPage: React.FC<{ onLogin: (user: User) => void }> = ({ onLogin }) 
     password: '',
     confirmPassword: '',
     role: 'learner' as UserRole,
+    userType: 'user' as 'user' | 'learner',
     referralCode: getReferralCodeFromUrl(),
-    userCategory: 'user' as 'nysc' | 'user',
     onboardingFee: '',
     country: 'Nigeria',
   });
@@ -94,7 +94,7 @@ const RegisterPage: React.FC<{ onLogin: (user: User) => void }> = ({ onLogin }) 
         full_name: `${formData.firstName} ${formData.lastName}`.trim(),
         role: mapFrontendRoleToBackend(formData.role),
         ...(formData.country.trim() && { country: formData.country.trim() }),
-        ...(formData.role === UserRole.LEARNER && { user_category: formData.userCategory }),
+        ...(formData.role === UserRole.LEARNER && { user_category: 'user' }),
         ...(onboardingFeeNumber !== null && Number.isFinite(onboardingFeeNumber) && onboardingFeeNumber >= 0
           ? { onboarding_fee: onboardingFeeNumber }
           : {}),
@@ -294,6 +294,36 @@ const RegisterPage: React.FC<{ onLogin: (user: User) => void }> = ({ onLogin }) 
                       </div>
                     </div>
 
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">
+                        User Type
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, userType: 'user' })}
+                          className={`py-2.5 text-sm rounded-lg border transition-all duration-200 font-bold ${
+                            formData.userType === 'user'
+                              ? 'bg-purple-600 text-white border-purple-600'
+                              : 'bg-white text-gray-700 border-gray-300 hover:border-purple-300'
+                          }`}
+                        >
+                          User
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, userType: 'learner' })}
+                          className={`py-2.5 text-sm rounded-lg border transition-all duration-200 font-bold ${
+                            formData.userType === 'learner'
+                              ? 'bg-purple-600 text-white border-purple-600'
+                              : 'bg-white text-gray-700 border-gray-300 hover:border-purple-300'
+                          }`}
+                        >
+                          Learner
+                        </button>
+                      </div>
+                    </div>
+
                     <button
                       type="button"
                       onClick={nextStep}
@@ -397,6 +427,10 @@ const RegisterPage: React.FC<{ onLogin: (user: User) => void }> = ({ onLogin }) 
                       <div className="flex justify-between text-[11px]">
                         <span className="text-gray-500">Role</span>
                         <span className="text-gray-900 font-bold capitalize">{formData.role}</span>
+                      </div>
+                      <div className="flex justify-between text-[11px]">
+                        <span className="text-gray-500">Type</span>
+                        <span className="text-gray-900 font-bold capitalize">{formData.userType}</span>
                       </div>
                     </div>
 

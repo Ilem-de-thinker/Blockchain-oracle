@@ -25,7 +25,7 @@ const RegisterPage: React.FC<{ onLogin: (user: User) => void }> = ({ onLogin }) 
     confirmPassword: '',
     role: 'learner' as UserRole,
     referralCode: getReferralCodeFromUrl(),
-    userCategory: 'user' as 'nysc' | 'user',
+    userType: 'user' as 'user' | 'learner',
     onboardingFee: '',
     country: 'Nigeria',
   });
@@ -97,7 +97,7 @@ const RegisterPage: React.FC<{ onLogin: (user: User) => void }> = ({ onLogin }) 
         full_name: `${formData.firstName} ${formData.lastName}`.trim(),
         role: mapFrontendRoleToBackend(formData.role),
         ...(formData.country.trim() && { country: formData.country.trim() }),
-        ...(formData.role === UserRole.LEARNER && { user_category: formData.userCategory }),
+        ...(formData.role === UserRole.LEARNER && { user_category: 'user' }),
         ...(onboardingFeeNumber !== null && Number.isFinite(onboardingFeeNumber) && onboardingFeeNumber >= 0
           ? { onboarding_fee: onboardingFeeNumber }
           : {}),

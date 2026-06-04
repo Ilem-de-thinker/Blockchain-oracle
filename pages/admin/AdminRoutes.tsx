@@ -38,6 +38,7 @@ const AdminQuizResultsPage = lazy(() => import('./pages/AdminQuizResultsPage'));
 const NotificationDetailPage = lazy(() => import('../shared/NotificationDetailPage'));
 const UserProgressPage = lazy(() => import('./pages/UserProgressPage'));
 const TutorDetailPage = lazy(() => import('./pages/TutorDetailPage'));
+const NYSCEnrollmentPage = lazy(() => import('./pages/NYSCEnrollmentPage'));
 const TutorProgressPage = lazy(() => import('./pages/TutorProgressPage'));
 const SupportPage = lazy(() => import('../shared/SupportPage'));
 
@@ -95,6 +96,7 @@ const AdminRoutes: React.FC = () => {
             <Route path="users" element={<UsersPage />} />
             <Route path="users/create" element={<CreateUserPage />} />
             <Route path="users/ratings" element={<UserRatingsPage />} />
+            <Route path="users/nysc-enrollment" element={<NYSCEnrollmentPage />} />
             <Route path="users/:id" element={<UserDetailPage />} />
             <Route path="users/:id/edit" element={<EditUserPage />} />
             <Route path="users/:id/progress" element={<UserProgressPage />} />

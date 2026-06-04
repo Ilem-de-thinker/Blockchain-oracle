@@ -42,6 +42,7 @@ const NotificationDetailPage = lazy(() => import('../shared/NotificationDetailPa
 const TutorDetailPage = lazy(() => import('../admin/pages/TutorDetailPage'));
 const TutorProgressPage = lazy(() => import('../admin/pages/TutorProgressPage'));
 const SupportPage = lazy(() => import('../shared/SupportPage'));
+const NYSCEnrollmentPage = lazy(() => import('../admin/pages/NYSCEnrollmentPage'));
 
 const LoadingFallback: React.FC = () => (
   <div className="flex items-center justify-center min-h-[400px]">
@@ -76,6 +77,7 @@ const SuperAdminRoutes: React.FC = () => {
             <Route path="users" element={<SuperAdminUsersPage />} />
             <Route path="users/create" element={<SuperAdminCreateUserPage />} />
             <Route path="users/ratings" element={<SuperAdminUserRatingsPage />} />
+            <Route path="users/nysc-enrollment" element={<NYSCEnrollmentPage />} />
             <Route path="users/:id" element={<SuperAdminUserDetailPage />} />
             <Route path="users/:id/edit" element={<SuperAdminEditUserPage />} />
             <Route path="users/:id/delete" element={<SuperAdminDeleteUserPage />} />
