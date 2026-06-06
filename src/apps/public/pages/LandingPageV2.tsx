@@ -1,26 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, EffectFade, Parallax } from 'swiper/modules';
-import { authApi, mapBackendRoleToFrontend } from '@/src/api/auth';
-import { coursesApi, Course } from '@/src/api/courses';
-import eventsApi, { Event as ApiEvent } from '@/src/api/events';
-import { UserRole, User } from '@/types';
-import GoogleSignInModal from '@/components/GoogleSignInModal';
-import LogoText from '@/components/LogoText';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, EffectFade, Parallax } from "swiper/modules";
+import { authApi, mapBackendRoleToFrontend } from "@/src/api/auth";
+import { coursesApi, Course } from "@/src/api/courses";
+import eventsApi, { Event as ApiEvent } from "@/src/api/events";
+import { UserRole, User } from "@/types";
+import GoogleSignInModal from "@/components/GoogleSignInModal";
+import LogoText from "@/components/LogoText";
 
-import 'swiper/css';
-import 'swiper/css/effect-fade';
-import 'swiper/css/parallax';
+import "swiper/css";
+import "swiper/css/effect-fade";
+import "swiper/css/parallax";
 
 const testimonialsData = [
-  { name: 'Ita Otu', role: 'Blockchain Architect', image: 'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000', quote: 'The community features make learning social and engaging. I\'ve made great connections with fellow learners.' },
-  { name: 'Effiom Bassey', role: 'Blockchain Developer', image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000', quote: 'AlphaKing Oracle transformed my learning experience. The AI-powered guidance helped me choose the perfect course path.' },
-  { name: 'Uyai Ekpo', role: 'DeFi Analyst', image: 'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000', quote: 'The personalized learning paths really helped me stay focused and motivated throughout my courses.' },
-  { name: 'Idara Edet', role: 'Smart Contract Engineer', image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000', quote: 'The project-based learning approach is fantastic. I\'ve gained practical skills that I\'m already using in my career.' },
-  { name: 'Ekaette Eyo', role: 'Crypto Analyst', image: 'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000', quote: 'The AI mentor provided valuable feedback that helped me improve my coding skills significantly.' },
-  { name: 'Okon Ubi', role: 'Web3 Developer', image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000', quote: 'Great platform for self-paced learning. The interactive exercises really help reinforce the concepts.' },
+  {
+    name: "Ita Otu",
+    role: "Blockchain Architect",
+    image:
+      "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "The community features make learning social and engaging. I've made great connections with fellow learners.",
+  },
+  {
+    name: "Effiom Bassey",
+    role: "Blockchain Developer",
+    image:
+      "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "AlphaKing Oracle transformed my learning experience. The AI-powered guidance helped me choose the perfect course path.",
+  },
+  {
+    name: "Uyai Ekpo",
+    role: "DeFi Analyst",
+    image:
+      "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "The personalized learning paths really helped me stay focused and motivated throughout my courses.",
+  },
+  {
+    name: "Idara Edet",
+    role: "Smart Contract Engineer",
+    image:
+      "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "The project-based learning approach is fantastic. I've gained practical skills that I'm already using in my career.",
+  },
+  {
+    name: "Ekaette Eyo",
+    role: "Crypto Analyst",
+    image:
+      "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "The AI mentor provided valuable feedback that helped me improve my coding skills significantly.",
+  },
+  {
+    name: "Okon Ubi",
+    role: "Web3 Developer",
+    image:
+      "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "Great platform for self-paced learning. The interactive exercises really help reinforce the concepts.",
+  },
 ];
 
 const CountdownTimer: React.FC<{ targetDate: string }> = ({ targetDate }) => {
@@ -43,13 +85,18 @@ const CountdownTimer: React.FC<{ targetDate: string }> = ({ targetDate }) => {
   return (
     <div className="flex gap-2">
       {[
-        { val: timeLeft.days, label: 'd' },
-        { val: timeLeft.hours, label: 'h' },
-        { val: timeLeft.minutes, label: 'm' },
+        { val: timeLeft.days, label: "d" },
+        { val: timeLeft.hours, label: "h" },
+        { val: timeLeft.minutes, label: "m" },
       ].map((item, i) => (
-        <div key={i} className="bg-purple-600/10 backdrop-blur rounded-lg px-2 py-1 text-center min-w-[40px]">
+        <div
+          key={i}
+          className="bg-purple-600/10 backdrop-blur rounded-lg px-2 py-1 text-center min-w-[40px]"
+        >
           <div className="text-sm font-bold text-purple-700">{item.val}</div>
-          <div className="text-[8px] text-purple-500 uppercase">{item.label}</div>
+          <div className="text-[8px] text-purple-500 uppercase">
+            {item.label}
+          </div>
         </div>
       ))}
     </div>
@@ -64,22 +111,22 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleLogout = async () => {
     await authApi.logout();
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
   const links = [
-    { name: 'Home', href: '#hero' },
-    { name: 'About', href: '#about' },
-    { name: 'Courses', href: '#courses' },
-    { name: 'Events', href: '#events' },
-    { name: 'Enterprise', href: '#enterprise' },
-    { name: 'Testimonials', href: '#testimonials' },
+    { name: "Home", href: "#hero" },
+    { name: "About", href: "#about" },
+    { name: "Courses", href: "#courses" },
+    { name: "Events", href: "#events" },
+    { name: "Enterprise", href: "#enterprise" },
+    { name: "Testimonials", href: "#testimonials" },
   ];
 
   const handleNavClick = (href: string) => {
@@ -88,7 +135,7 @@ const Navbar: React.FC = () => {
       const el = document.querySelector(href);
       if (el) {
         const top = el.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: 'smooth' });
+        window.scrollTo({ top, behavior: "smooth" });
       }
     });
   };
@@ -97,18 +144,28 @@ const Navbar: React.FC = () => {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-[150] transition-all duration-500 ${
-        scrolled ? 'bg-white backdrop-blur-xl border-b border-purple-100 shadow-lg shadow-purple-500/5' : 'bg-transparent'
+        scrolled
+          ? "bg-white backdrop-blur-xl border-b border-purple-100 shadow-lg shadow-purple-500/5"
+          : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <motion.div whileHover={{ rotate: 12 }} transition={{ duration: 0.3 }}>
-            <img src="/Logo/logo.png" alt="BlockchainOracle Logo" className="w-8 h-8 object-contain" />
+          <motion.div
+            whileHover={{ rotate: 12 }}
+            transition={{ duration: 0.3 }}
+          >
+            <img
+              src="/Logo/logo.png"
+              alt="BlockchainOracle Logo"
+              className="w-8 h-8 object-contain"
+            />
           </motion.div>
           <span className="text-xl font-black text-gray-900">
-            Blo|&lt;Chain<span style={{ fontWeight: 300, fontSize: '1.2em' }}>0</span>racle
+            Blo|&lt;Chain
+            <span style={{ fontWeight: 300, fontSize: "1.2em" }}>0</span>racle
           </span>
         </Link>
 
@@ -132,7 +189,7 @@ const Navbar: React.FC = () => {
           {isAuthenticated ? (
             <>
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate("/dashboard")}
                 className="px-5 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all"
               >
                 Dashboard
@@ -147,18 +204,31 @@ const Navbar: React.FC = () => {
             </>
           ) : (
             <>
-              <Link to="/login" className="px-5 py-2 rounded-xl text-sm font-bold text-gray-600 hover:text-purple-600 border border-gray-200 hover:border-purple-300 transition-all">
+              <Link
+                to="/login"
+                className="px-5 py-2 rounded-xl text-sm font-bold text-gray-600 hover:text-purple-600 border border-gray-200 hover:border-purple-300 transition-all"
+              >
                 Sign In
               </Link>
-              <Link to="/register" className="px-5 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all">
+              <Link
+                to="/register"
+                className="px-5 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all"
+              >
                 Get Started
               </Link>
             </>
           )}
         </div>
 
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden text-gray-900 text-xl">
-          {mobileOpen ? <i className="fas fa-times"></i> : <i className="fas fa-bars"></i>}
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="lg:hidden text-gray-900 text-xl"
+        >
+          {mobileOpen ? (
+            <i className="fas fa-times"></i>
+          ) : (
+            <i className="fas fa-bars"></i>
+          )}
         </button>
       </div>
 
@@ -166,7 +236,7 @@ const Navbar: React.FC = () => {
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden bg-white/95 backdrop-blur-xl border-t border-purple-100"
           >
@@ -184,17 +254,33 @@ const Navbar: React.FC = () => {
                 {/* <Link to="/legacy" className="w-full py-2.5 rounded-xl text-sm font-bold text-center border border-gray-200 text-gray-400 hover:text-purple-600 hover:border-purple-300 transition-all">Classic Homepage</Link> */}
                 {isAuthenticated ? (
                   <>
-                    <button onClick={() => navigate('/dashboard')} className="w-full py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white">
+                    <button
+                      onClick={() => navigate("/dashboard")}
+                      className="w-full py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white"
+                    >
                       Dashboard
                     </button>
-                    <button onClick={handleLogout} className="w-full py-2.5 rounded-xl text-sm font-bold text-red-500 border border-red-200 hover:bg-red-50 transition-all">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full py-2.5 rounded-xl text-sm font-bold text-red-500 border border-red-200 hover:bg-red-50 transition-all"
+                    >
                       <i className="fas fa-sign-out-alt mr-2"></i>Sign Out
                     </button>
                   </>
                 ) : (
                   <>
-                    <Link to="/login" className="w-full py-2.5 rounded-xl text-sm font-bold text-center border border-gray-200 text-gray-600">Sign In</Link>
-                    <Link to="/register" className="w-full py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white text-center">Get Started</Link>
+                    <Link
+                      to="/login"
+                      className="w-full py-2.5 rounded-xl text-sm font-bold text-center border border-gray-200 text-gray-600"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/register"
+                      className="w-full py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white text-center"
+                    >
+                      Get Started
+                    </Link>
                   </>
                 )}
               </div>
@@ -222,7 +308,12 @@ const ParticleField: React.FC = () => {
         <motion.div
           key={p.id}
           className="absolute rounded-full bg-purple-400/30"
-          style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: p.size,
+            height: p.size,
+          }}
           animate={{
             y: [0, -30, 0],
             opacity: [0.2, 0.6, 0.2],
@@ -231,7 +322,7 @@ const ParticleField: React.FC = () => {
             duration: p.duration,
             repeat: Infinity,
             delay: p.delay,
-            ease: 'easeInOut',
+            ease: "easeInOut",
           }}
         />
       ))}
@@ -242,32 +333,40 @@ const ParticleField: React.FC = () => {
 const HeroCarousel: React.FC = () => {
   const slides = [
     {
-      headline: 'Master Blockchain & Web3 Skills',
-      subtext: 'Learn blockchain, crypto, and Web3 technologies with structured programs built for Africa.',
-      image: 'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000',
-      gradient: 'from-purple-100 via-white to-purple-50',
-      accent: 'from-purple-600 to-purple-400',
+      headline: "Master Blockchain & Web3 Skills",
+      subtext:
+        "Learn blockchain, crypto, and Web3 technologies with structured programs built for Africa.",
+      image:
+        "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000",
+      gradient: "from-purple-100 via-white to-purple-50",
+      accent: "from-purple-600 to-purple-400",
     },
     {
-      headline: 'Build the Future with Web3',
-      subtext: 'Develop decentralized applications, smart contracts, and next-generation blockchain solutions.',
-      image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000',
-      gradient: 'from-purple-50 via-white to-indigo-50',
-      accent: 'from-indigo-600 to-purple-500',
+      headline: "Build the Future with Web3",
+      subtext:
+        "Develop decentralized applications, smart contracts, and next-generation blockchain solutions.",
+      image:
+        "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000",
+      gradient: "from-purple-50 via-white to-indigo-50",
+      accent: "from-indigo-600 to-purple-500",
     },
     {
-      headline: 'Blockchain Solutions for Businesses',
-      subtext: 'Enterprise-grade consulting, training, and implementation for organizations ready to innovate.',
-      image: 'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000',
-      gradient: 'from-violet-50 via-white to-purple-50',
-      accent: 'from-violet-600 to-purple-500',
+      headline: "Blockchain Solutions for Businesses",
+      subtext:
+        "Enterprise-grade consulting, training, and implementation for organizations ready to innovate.",
+      image:
+        "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000",
+      gradient: "from-violet-50 via-white to-purple-50",
+      accent: "from-violet-600 to-purple-500",
     },
     {
       headline: "Join Africa's Web3 Movement",
-      subtext: 'Connect with thousands of learners, developers, and innovators building the decentralized future.',
-      image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000',
-      gradient: 'from-purple-100 via-white to-fuchsia-50',
-      accent: 'from-purple-600 to-fuchsia-500',
+      subtext:
+        "Connect with thousands of learners, developers, and innovators building the decentralized future.",
+      image:
+        "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000",
+      gradient: "from-purple-100 via-white to-fuchsia-50",
+      accent: "from-purple-600 to-fuchsia-500",
     },
   ];
 
@@ -289,15 +388,17 @@ const HeroCarousel: React.FC = () => {
               <motion.img
                 initial={{ scale: 1.2 }}
                 animate={{ scale: 1 }}
-                transition={{ duration: 5, ease: 'linear' }}
+                transition={{ duration: 5, ease: "linear" }}
                 src={slide.image}
                 alt=""
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              
+
               {/* Overlay Gradient for Readability */}
-              <div className={`absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent z-0`} />
-              
+              <div
+                className={`absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent z-0`}
+              />
+
               <div className="relative z-10 pl-8 md:pl-16 lg:pl-24 max-w-full md:max-w-[45%] lg:max-w-3xl">
                 <motion.h1
                   initial={{ opacity: 0, y: 60 }}
@@ -357,25 +458,39 @@ const FloatingCard: React.FC = () => (
       <div className="relative bg-white backdrop-blur-xl border border-purple-200 rounded-3xl p-6 lg:p-8 w-[320px] lg:w-96 shadow-2xl shadow-purple-500/10">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center">
-            <img src="/Logo/logo.png" alt="BlockchainOracle Logo" className="w-8 h-8 object-contain" />
+            <img
+              src="/Logo/logo.png"
+              alt="BlockchainOracle Logo"
+              className="w-8 h-8 object-contain"
+            />
           </div>
           <div>
-            <h3 className="font-bold text-gray-900 text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600 }}>
-              Blo|&lt;Chain<span style={{ fontWeight: 300, fontSize: '1.2em', fontFamily: "'Montserrat', sans-serif" }}>0</span>racle
+            <h3
+              className="font-bold text-gray-900 text-lg"
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+              }}
+            >
+              Blo|&lt;Chain
+              <span
+                style={{
+                  fontWeight: 300,
+                  fontSize: "1.2em",
+                  fontFamily: "'Montserrat', sans-serif",
+                }}
+              >
+                0
+              </span>
+              racle
             </h3>
-            <p className="text-xs text-purple-600 font-bold uppercase tracking-widest">Platform</p>
+
           </div>
         </div>
         <p className="text-sm text-gray-500 mb-6 leading-relaxed">
-          A Blockchain and Web3 Mastery platform — delivering structured education, enterprise services, and advisory for inclusive digital transformation in Africa.
+         Deliverying structured education, enterprise services, and advisory solutiions for inclusive digital transformation across Africa.
         </p>
         <div className="space-y-3">
-          <Link
-            to="/courses"
-            className="w-full py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all flex items-center justify-center gap-2"
-          >
-            Start Learning <i className="fas fa-arrow-right text-xs"></i>
-          </Link>
           <Link
             to="/enterprise"
             className="w-full py-3 rounded-xl text-sm font-bold border border-purple-200 text-purple-700 hover:bg-purple-50 transition-all flex items-center justify-center gap-2"
@@ -386,12 +501,19 @@ const FloatingCard: React.FC = () => (
         <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
           <div className="flex -space-x-2">
             {[1, 2, 3, 4].map((i) => (
-              <img key={i} src={`https://i.pravatar.cc/100?u=${i + 30}`} className="w-7 h-7 rounded-full border-2 border-white" alt="" />
+              <img
+                key={i}
+                src={`https://i.pravatar.cc/100?u=${i + 30}`}
+                className="w-7 h-7 rounded-full border-2 border-white"
+                alt=""
+              />
             ))}
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-xs text-gray-500 font-bold">Active Learners</span>
+            <span className="text-xs text-gray-500 font-bold">
+              Active Learners
+            </span>
           </div>
         </div>
       </div>
@@ -401,23 +523,23 @@ const FloatingCard: React.FC = () => (
 
 const FloatingReadMoreButton: React.FC = () => {
   const scrollToAbout = () => {
-    document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
+    document.querySelector("#about")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <motion.button
       onClick={scrollToAbout}
       animate={{ y: [0, -12, 0] }}
-      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 group"
     >
       <div className="relative">
         <div className="absolute -inset-2 bg-purple-500/20 rounded-full blur-lg group-hover:bg-purple-500/40 transition-all" />
         <div className="relative bg-white backdrop-blur border border-purple-200 rounded-full px-6 py-3 flex items-center gap-2 text-purple-600 hover:text-purple-700 hover:border-purple-300 transition-all">
-          <span className="text-sm font-bold">Read More</span>
+          <span className="text-sm font-bold">explore</span>
           <motion.div
             animate={{ y: [0, 4, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
           >
             <i className="fas fa-arrow-down text-xs"></i>
           </motion.div>
@@ -425,21 +547,56 @@ const FloatingReadMoreButton: React.FC = () => {
       </div>
     </motion.button>
   );
+  
 };
 
 const HeroSection: React.FC = () => (
-  <section id="hero" className="relative min-h-screen flex items-center overflow-hidden">
+  <section
+    id="hero"
+    className="relative min-h-screen flex items-center overflow-hidden"
+  >
     <HeroCarousel />
     <FloatingCard />
     <FloatingReadMoreButton />
   </section>
 );
 
+const partners = [
+  { name: "Binance", logo: "https://cryptologos.cc/logos/binance-coin-bnb-logo.svg" },
+  { name: "Ethereum", logo: "https://cryptologos.cc/logos/ethereum-eth-logo.svg" },
+  { name: "Polygon", logo: "https://cryptologos.cc/logos/polygon-matic-logo.svg" },
+  { name: "Solana", logo: "https://cryptologos.cc/logos/solana-sol-logo.svg" },
+  { name: "Chainlink", logo: "https://cryptologos.cc/logos/chainlink-link-logo.svg" },
+  { name: "Cardano", logo: "https://cryptologos.cc/logos/cardano-ada-logo.svg" },
+  { name: "Polkadot", logo: "https://cryptologos.cc/logos/polkadot-new-dot-logo.svg" },
+  { name: "Avalanche", logo: "https://cryptologos.cc/logos/avalanche-avax-logo.svg" },
+];
+
 const TrustedBy: React.FC = () => {
   return (
-    <section className="py-16 border-y border-gray-100 bg-white">
+    <section className="py-16 border-y border-gray-100 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
-        <p className="text-center text-xs font-bold uppercase tracking-[0.3em] text-gray-400 mb-8">Building Africa's Blockchain Talent Pipeline</p>
+        <Swiper
+          modules={[Autoplay]}
+          spaceBetween={48}
+          slidesPerView="auto"
+          loop
+          autoplay={{ delay: 0, disableOnInteraction: false, pauseOnMouseEnter: true }}
+          speed={3000}
+          className="!overflow-visible"
+        >
+          {[...partners, ...partners].map((p, i) => (
+            <SwiperSlide key={i} className="!w-auto">
+              <div className="flex items-center gap-3 h-12 px-6">
+                <img
+                  src={p.logo}
+                  alt={p.name}
+                  className="h-8 w-auto object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </section>
   );
@@ -459,14 +616,17 @@ const AboutPreview: React.FC = () => (
         <div className="relative">
           <div className="absolute -inset-4 bg-gradient-to-r from-purple-200/40 to-purple-100/40 rounded-3xl blur-xl" />
           <div className="relative bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-xl">
-            <img src="https://images.unsplash.com/photo-1639762681057-408e52192e55?w=600&h=400&fit=crop" alt="Blockchain" className="w-full h-90 object-cover" />
+            <img
+              src="https://images.unsplash.com/photo-1639762681057-408e52192e55?w=600&h=400&fit=crop"
+              alt="Blockchain"
+              className="w-full h-90 object-cover"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
             <div className="absolute bottom-6 left-6 right-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
                   <i className="fas fa-play text-purple-600 text-sm"></i>
                 </div>
-                
               </div>
             </div>
           </div>
@@ -483,12 +643,27 @@ const AboutPreview: React.FC = () => (
           About Us
         </span>
         <h2 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight mb-6">
-          Blockchain & Web3 <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">Mastery</span> for Africa
+          Blockchain & Web3{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
+            Mastery
+          </span>{" "}
+          for Africa
         </h2>
         <p className="text-gray-500 text-lg leading-relaxed mb-8">
-Blockchain Oracle is a leading Blockchain and Web3 education and enterprise solutions platform dedicated to empowering Africa's digital future. We provide a comprehensive learning ecosystem where individuals can gain practical knowledge through structured programs in Blockchain Foundations, Web3 Mastery, and Crypto Trading, while organizations access strategic consulting, training, events, and advisory services to accelerate blockchain adoption.        </p>
+          Blockchain Oracle is a leading Blockchain and Web3 education and
+          enterprise solutions platform dedicated to empowering Africa's digital
+          future. We provide a comprehensive learning ecosystem where
+          individuals can gain practical knowledge through structured programs
+          in Blockchain Foundations, Web3 Mastery, and Crypto Trading, while
+          organizations access strategic consulting, training, events, and
+          advisory services to accelerate blockchain adoption.{" "}
+        </p>
         <div className="space-y-4 mb-8">
-          {['Delivers structured Blockchain Foundations and Web3 Mastery courses', 'Combines education with real-world practice through events and consulting', 'Offers contextualized African-focused content and case studies', 'Supports enterprises end-to-end with advisory and launch strategies'].map((item, i) => (
+          {[
+            "Structured Blockchain Foundations and Web3 Mastery courses",
+            "Combining education with real-world practice through events and consulting",
+            "Supporting enterprises with end-to-end advisory, and launch strategies",
+          ].map((item, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: 20 }}
@@ -502,7 +677,10 @@ Blockchain Oracle is a leading Blockchain and Web3 education and enterprise solu
             </motion.div>
           ))}
         </div>
-        <Link to="/courses" className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all">
+        <Link
+          to="/courses"
+          className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all"
+        >
           Explore Courses <i className="fas fa-arrow-right text-xs"></i>
         </Link>
       </motion.div>
@@ -512,12 +690,42 @@ Blockchain Oracle is a leading Blockchain and Web3 education and enterprise solu
 
 const PlatformFeatures: React.FC = () => {
   const features = [
-    { icon: 'fas fa-graduation-cap', title: 'Structured Learning', desc: 'Clear curriculum pathways from foundational blockchain concepts to intermediate Web3 mastery.', color: 'from-purple-500 to-pink-500' },
-    { icon: 'fas fa-code', title: 'Real-World Practice', desc: 'Events, webinars, and consulting services that bridge theory to implementation.', color: 'from-blue-500 to-cyan-500' },
-    { icon: 'fas fa-chart-line', title: 'Progress Tracking', desc: 'Module completion tracking, progress bars, and time estimates for every course.', color: 'from-purple-500 to-purple-600' },
-    { icon: 'fas fa-shield-alt', title: 'Certified Programs', desc: 'Downloadable certificates with unique IDs upon successful course completion.', color: 'from-amber-500 to-orange-500' },
-    { icon: 'fas fa-users', title: 'Community Hub', desc: 'Connect with a growing community of learners, alumni, mentors, and ecosystem partners.', color: 'from-rose-500 to-red-500' },
-    { icon: 'fas fa-globe', title: 'African-Focused Content', desc: 'Curricula and case studies tailored to African markets, regulations, and infrastructure realities.', color: 'from-indigo-500 to-purple-500' },
+    {
+      icon: "fas fa-graduation-cap",
+      title: "Structured Learning",
+      desc: "Begin your blockchain journey with clear curriculum pathways from foundational blockchain concepts to intermediate Web3 mastery.",
+      color: "from-purple-500 to-pink-500",
+    },
+    {
+      icon: "fas fa-code",
+      title: "Real-World Practice",
+      desc: "Engage in Events, webinars, and consulting services that bridge theory to implementation.",
+      color: "from-blue-500 to-cyan-500",
+    },
+    {
+      icon: "fas fa-chart-line",
+      title: "Progress Tracking",
+      desc: "Monitor your Journey with module completion tracking, visual progress indicators, and estimated learning timeline",
+      color: "from-purple-500 to-purple-600",
+    },
+    {
+      icon: "fas fa-shield-alt",
+      title: "Certified Programs",
+      desc: "Showcase your achievements with downloadable certificates backed by unique verification codes upon successful course completion.",
+      color: "from-amber-500 to-orange-500",
+    },
+    {
+      icon: "fas fa-users",
+      title: "Community Hub",
+      desc: "Industry-relevant courses and case studies aligned with African economic system and technological environment.",
+      color: "from-rose-500 to-red-500",
+    },
+    {
+      icon: "fas fa-globe",
+      title: "African-Focused Content",
+      desc: "Curricula and case studies tailored to African markets, regulations, and infrastructure realities.",
+      color: "from-indigo-500 to-purple-500",
+    },
   ];
 
   return (
@@ -533,9 +741,16 @@ const PlatformFeatures: React.FC = () => {
             Features
           </span>
           <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
-            Powerful <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">Platform</span> Features
+            Powerful{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
+              Platform
+            </span>{" "}
+            Features
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">Structured blockchain education and enterprise services designed for African learners and organizations.</p>
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            Structured blockchain education and enterprise services designed for
+            African learners and organizations.
+          </p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -549,10 +764,14 @@ const PlatformFeatures: React.FC = () => {
               whileHover={{ y: -8 }}
               className="group bg-white border border-gray-100 rounded-2xl p-8 hover:border-purple-200 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/5"
             >
-              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center text-white text-xl mb-6 group-hover:scale-110 transition-transform`}>
+              <div
+                className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center text-white text-xl mb-6 group-hover:scale-110 transition-transform`}
+              >
                 <i className={f.icon}></i>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-3">{f.title}</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">
+                {f.title}
+              </h3>
               <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
             </motion.div>
           ))}
@@ -569,10 +788,19 @@ const CoursesPreview: React.FC = () => {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const response = await coursesApi.getCourses(1, 4, undefined, undefined, undefined, '-created_at', undefined, true);
+        const response = await coursesApi.getCourses(
+          1,
+          4,
+          undefined,
+          undefined,
+          undefined,
+          "-created_at",
+          undefined,
+          true,
+        );
         setFeaturedCourses(response.items || []);
       } catch (err) {
-        console.error('Failed to fetch featured courses:', err);
+        console.error("Failed to fetch featured courses:", err);
       } finally {
         setCoursesLoading(false);
       }
@@ -594,18 +822,28 @@ const CoursesPreview: React.FC = () => {
               Courses
             </span>
             <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-              Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">Courses</span>
+              Featured{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
+                Courses
+              </span>
             </h2>
           </div>
-          <Link to="/courses" className="text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2 text-sm group">
-            View All Courses <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          <Link
+            to="/courses"
+            className="text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2 text-sm group"
+          >
+            View All Courses{" "}
+            <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
           </Link>
         </motion.div>
 
         {coursesLoading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((s) => (
-              <div key={s} className="animate-pulse bg-white border border-gray-100 rounded-2xl overflow-hidden">
+              <div
+                key={s}
+                className="animate-pulse bg-white border border-gray-100 rounded-2xl overflow-hidden"
+              >
                 <div className="h-44 bg-gray-100" />
                 <div className="p-5 space-y-3">
                   <div className="h-4 bg-gray-100 rounded w-3/4" />
@@ -632,10 +870,16 @@ const CoursesPreview: React.FC = () => {
                 >
                   <div className="relative h-44 overflow-hidden">
                     {c.thumbnail_url ? (
-                      <img src={c.thumbnail_url} alt={c.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <img
+                        src={c.thumbnail_url}
+                        alt={c.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center">
-                        <span className="text-white/20 text-6xl font-black">{c.title.charAt(0)}</span>
+                        <span className="text-white/20 text-6xl font-black">
+                          {c.title.charAt(0)}
+                        </span>
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent" />
@@ -646,11 +890,17 @@ const CoursesPreview: React.FC = () => {
                     )}
                   </div>
                   <div className="p-5">
-                    <h3 className="font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors line-clamp-1">{c.title}</h3>
-                    <p className="text-xs text-gray-400 line-clamp-2 mb-4">{c.description}</p>
+                    <h3 className="font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors line-clamp-1">
+                      {c.title}
+                    </h3>
+                    <p className="text-xs text-gray-400 line-clamp-2 mb-4">
+                      {c.description}
+                    </p>
                     <div className="flex items-center justify-between">
                       <span className="text-xl font-black text-gray-900">
-                        {parseFloat(c.total_amount || '0') === 0 ? 'FREE' : `₦${c.total_amount}`}
+                        {parseFloat(c.total_amount || "0") === 0
+                          ? "FREE"
+                          : `₦${c.total_amount}`}
                       </span>
                       <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all flex items-center justify-center">
                         <i className="fas fa-arrow-right text-xs"></i>
@@ -669,9 +919,42 @@ const CoursesPreview: React.FC = () => {
 
 const LearningPaths: React.FC = () => {
   const paths = [
-    { title: 'Blockchain Foundations', steps: ['Blockchain Basics', 'Cryptography', 'Consensus Mechanisms', 'Network Architecture', 'Use Cases'], icon: 'fas fa-cube', color: 'from-purple-500 to-blue-500' },
-    { title: 'Web3 Developer / Builder', steps: ['Web3 Basics', 'Smart Contracts', 'DApp Development', 'DeFi Protocols', 'Security'], icon: 'fas fa-code', color: 'from-purple-500 to-purple-600' },
-    { title: 'Crypto Literacy & Trading', steps: ['Market Basics', 'Risk Management', 'Technical Analysis', 'Fundamental Analysis', 'Security Practices'], icon: 'fas fa-chart-line', color: 'from-amber-500 to-orange-500' },
+    {
+      title: "Blockchain Foundations",
+      steps: [
+        "Blockchain Basics",
+        "Cryptography",
+        "Consensus Mechanisms",
+        "Network Architecture",
+        "Use Cases",
+      ],
+      icon: "fas fa-cube",
+      color: "from-purple-500 to-blue-500",
+    },
+    {
+      title: "Web3 Developer / Builder",
+      steps: [
+        "Web3 Basics",
+        "Smart Contracts",
+        "DApp Development",
+        "DeFi Protocols",
+        "Security",
+      ],
+      icon: "fas fa-code",
+      color: "from-purple-500 to-purple-600",
+    },
+    {
+      title: "Crypto Literacy & Trading",
+      steps: [
+        "Market Basics",
+        "Risk Management",
+        "Technical Analysis",
+        "Fundamental Analysis",
+        "Security Practices",
+      ],
+      icon: "fas fa-chart-line",
+      color: "from-amber-500 to-orange-500",
+    },
   ];
 
   return (
@@ -687,7 +970,10 @@ const LearningPaths: React.FC = () => {
             Learning Paths
           </span>
           <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-            Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">Path</span>
+            Choose Your{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
+              Path
+            </span>
           </h2>
         </motion.div>
 
@@ -701,17 +987,25 @@ const LearningPaths: React.FC = () => {
               transition={{ delay: i * 0.15 }}
               className="group bg-white border border-gray-100 rounded-2xl p-8 hover:border-purple-200 transition-all hover:shadow-lg"
             >
-              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${p.color} flex items-center justify-center text-white text-xl mb-6`}>
+              <div
+                className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${p.color} flex items-center justify-center text-white text-xl mb-6`}
+              >
                 <i className={p.icon}></i>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-6">{p.title}</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-6">
+                {p.title}
+              </h3>
               <div className="space-y-3">
                 {p.steps.map((step, j) => (
                   <div key={j} className="flex items-center gap-3">
-                    <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${p.color} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
+                    <div
+                      className={`w-7 h-7 rounded-full bg-gradient-to-br ${p.color} flex items-center justify-center text-white text-xs font-bold shrink-0`}
+                    >
                       {j + 1}
                     </div>
-                    <span className="text-gray-600 text-sm font-medium">{step}</span>
+                    <span className="text-gray-600 text-sm font-medium">
+                      {step}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -725,14 +1019,38 @@ const LearningPaths: React.FC = () => {
 
 const EnterpriseServices: React.FC = () => {
   const services = [
-    { title: 'Staffing & Recruitment', desc: 'Blockchain talent sourcing and recruitment for technical and advisory roles.', icon: 'fas fa-users' },
-    { title: 'Tokenomics Design', desc: 'Economic modeling and tokenomics creation for blockchain-based business models.', icon: 'fas fa-chart-line' },
-    { title: 'Business Development', desc: 'Partnership strategy and business development support for blockchain adoption.', icon: 'fas fa-shield-alt' },
-    { title: 'Launch-to-Market Strategy', desc: 'Go-to-market strategy and launch planning for blockchain products and platforms.', icon: 'fas fa-rocket' },
+    {
+      title: "Staffing & Recruitment",
+      desc: "Blockchain talent sourcing and recruitment for technical and advisory roles.",
+      icon: "fas fa-users",
+    },
+    {
+      title: "Tokenomics Design",
+      desc: "Economic modeling and tokenomics creation for blockchain-based business models.",
+      icon: "fas fa-chart-line",
+    },
+    {
+      title: "Business Development",
+      desc: "Partnership strategy and business development support for blockchain adoption.",
+      icon: "fas fa-shield-alt",
+    },
+    {
+      title: "Launch-to-Market Strategy",
+      desc: "Go-to-market strategy and launch planning for blockchain products and platforms.",
+      icon: "fas fa-rocket",
+    },
+    {
+      title: "Enterprise Platform Development",
+      desc: "Custom enterprise platforms with dedicated user dashboards, course management systems, role-based access control, and comprehensive admin panels tailored to your organization.",
+      icon: "fas fa-laptop-code",
+    },
   ];
 
   return (
-    <section id="enterprise" className="py-32 bg-white relative overflow-hidden">
+    <section
+      id="enterprise"
+      className="py-32 bg-white relative overflow-hidden"
+    >
       <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-transparent to-purple-50/50" />
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
@@ -745,9 +1063,14 @@ const EnterpriseServices: React.FC = () => {
             Enterprise
           </span>
           <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-            Enterprise <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">Services</span>
+            Enterprise{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
+              Services
+            </span>
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto mt-4">Blockchain events, Web3 webinars, corporate training, and business consulting for African enterprises.</p>
+          <p className="text-gray-500 max-w-2xl mx-auto mt-4">
+            From web 3 webiners and blockchain events to coperate training and consulting we support african enterprices in adopting emerging technologies
+          </p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -759,14 +1082,18 @@ const EnterpriseServices: React.FC = () => {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
               whileHover={{ scale: 1.02 }}
-              className="group bg-white border border-gray-100 rounded-2xl p-8 hover:border-purple-200 transition-all flex items-start gap-5 hover:shadow-lg"
+              className={`group bg-white border border-gray-100 rounded-2xl p-8 hover:border-purple-200 transition-all flex items-start gap-5 hover:shadow-lg ${i === services.length - 1 ? "md:col-span-2 md:max-w-xl md:mx-auto md:w-full" : ""}`}
             >
               <div className="w-14 h-14 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-600 text-xl shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-all">
                 <i className={s.icon}></i>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{s.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  {s.title}
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  {s.desc}
+                </p>
               </div>
             </motion.div>
           ))}
@@ -786,7 +1113,7 @@ const EventsWebinars: React.FC = () => {
         const response = await eventsApi.getEvents(1, 3);
         setFeaturedEvents(response.results || []);
       } catch (err) {
-        console.error('Failed to fetch featured events:', err);
+        console.error("Failed to fetch featured events:", err);
       } finally {
         setEventsLoading(false);
       }
@@ -808,18 +1135,28 @@ const EventsWebinars: React.FC = () => {
               Events
             </span>
             <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-              Upcoming <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">Events</span>
+              Upcoming{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
+                Events
+              </span>
             </h2>
           </div>
-          <Link to="/events" className="text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2 text-sm group">
-            View All Events <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          <Link
+            to="/events"
+            className="text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2 text-sm group"
+          >
+            View All Events{" "}
+            <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
           </Link>
         </motion.div>
 
         {eventsLoading ? (
           <div className="grid md:grid-cols-3 gap-6">
             {[1, 2, 3].map((s) => (
-              <div key={s} className="animate-pulse bg-white border border-gray-100 rounded-2xl overflow-hidden">
+              <div
+                key={s}
+                className="animate-pulse bg-white border border-gray-100 rounded-2xl overflow-hidden"
+              >
                 <div className="h-44 bg-gray-100" />
                 <div className="p-5 space-y-3">
                   <div className="h-4 bg-gray-100 rounded w-3/4" />
@@ -842,7 +1179,11 @@ const EventsWebinars: React.FC = () => {
                 >
                   <div className="relative h-44 overflow-hidden">
                     {e.image_url ? (
-                      <img src={e.image_url} alt={e.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <img
+                        src={e.image_url}
+                        alt={e.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center">
                         <i className="fas fa-calendar-alt text-white/20 text-6xl"></i>
@@ -852,18 +1193,28 @@ const EventsWebinars: React.FC = () => {
                     <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-purple-600/90 text-white text-[10px] font-bold uppercase tracking-wider">
                       {e.type}
                     </span>
-                    {parseFloat(e.registration_fee || '0') + parseFloat(e.event_fee || '0') === 0 && (
+                    {parseFloat(e.registration_fee || "0") +
+                      parseFloat(e.event_fee || "0") ===
+                      0 && (
                       <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-purple-500/90 text-white text-[10px] font-bold uppercase tracking-wider">
                         Free
                       </span>
                     )}
                   </div>
                   <div className="p-5">
-                    <h3 className="font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors">{e.title}</h3>
-                    <p className="text-xs text-gray-400 line-clamp-2 mb-3">{e.description}</p>
+                    <h3 className="font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors">
+                      {e.title}
+                    </h3>
+                    <p className="text-xs text-gray-400 line-clamp-2 mb-3">
+                      {e.description}
+                    </p>
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-xs text-gray-400">
-                        {new Date(e.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                        {new Date(e.date).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
                       </span>
                       <CountdownTimer targetDate={e.date} />
                     </div>
@@ -887,16 +1238,24 @@ const EventsWebinars: React.FC = () => {
   );
 };
 
-const TestimonialCard: React.FC<{ testimonial: typeof testimonialsData[0] }> = ({ testimonial }) => (
+const TestimonialCard: React.FC<{
+  testimonial: (typeof testimonialsData)[0];
+}> = ({ testimonial }) => (
   <div className="bg-white p-6 rounded-2xl shadow-lg shadow-purple-100/50 border border-gray-100 hover:border-purple-200 transition-all flex-shrink-0 mx-2 my-3">
     <div className="flex items-center gap-1 mb-3">
-      {[1, 2, 3, 4, 5].map(i => (
+      {[1, 2, 3, 4, 5].map((i) => (
         <i key={i} className="fas fa-star text-yellow-400 text-xs"></i>
       ))}
     </div>
-    <p className="text-gray-600 text-sm leading-relaxed mb-4">"{testimonial.quote}"</p>
+    <p className="text-gray-600 text-sm leading-relaxed mb-4">
+      "{testimonial.quote}"
+    </p>
     <div className="flex items-center gap-3">
-      <img src={testimonial.image} alt={testimonial.name} className="w-10 h-10 rounded-full" />
+      <img
+        src={testimonial.image}
+        alt={testimonial.name}
+        className="w-10 h-10 rounded-full"
+      />
       <div>
         <h4 className="font-bold text-gray-900 text-sm">{testimonial.name}</h4>
         <p className="text-xs text-gray-500">{testimonial.role}</p>
@@ -907,7 +1266,7 @@ const TestimonialCard: React.FC<{ testimonial: typeof testimonialsData[0] }> = (
 
 const ScrollingCarousel: React.FC<{
   testimonials: typeof testimonialsData;
-  direction: 'up' | 'down';
+  direction: "up" | "down";
   speed: number;
 }> = ({ testimonials, direction, speed }) => {
   const duplicated = [...testimonials, ...testimonials];
@@ -934,7 +1293,9 @@ const ScrollingCarousel: React.FC<{
           animation-play-state: paused;
         }
       `}</style>
-      <div className={`carousel-container absolute w-full ${direction === 'up' ? 'scroll-up' : 'scroll-down'}`}>
+      <div
+        className={`carousel-container absolute w-full ${direction === "up" ? "scroll-up" : "scroll-down"}`}
+      >
         {duplicated.map((testimonial, idx) => (
           <div key={idx}>
             <TestimonialCard testimonial={testimonial} />
@@ -958,14 +1319,30 @@ const TestimonialsSection: React.FC = () => (
           Testimonials
         </span>
         <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-          What Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">Students</span> Say
+          What Our{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
+            Students
+          </span>{" "}
+          Say
         </h2>
       </motion.div>
 
       <div className="lg:grid lg:grid-cols-3 gap-8 hidden">
-        <ScrollingCarousel testimonials={testimonialsData.slice(0, 2)} direction="up" speed={25} />
-        <ScrollingCarousel testimonials={testimonialsData.slice(2, 4)} direction="down" speed={25} />
-        <ScrollingCarousel testimonials={testimonialsData.slice(4, 6)} direction="up" speed={25} />
+        <ScrollingCarousel
+          testimonials={testimonialsData.slice(0, 2)}
+          direction="up"
+          speed={25}
+        />
+        <ScrollingCarousel
+          testimonials={testimonialsData.slice(2, 4)}
+          direction="down"
+          speed={25}
+        />
+        <ScrollingCarousel
+          testimonials={testimonialsData.slice(4, 6)}
+          direction="up"
+          speed={25}
+        />
       </div>
 
       <div className="lg:hidden">
@@ -981,9 +1358,27 @@ const TestimonialsSection: React.FC = () => (
 
 const BlogPreview: React.FC = () => {
   const posts = [
-    { title: 'Understanding Layer 2 Scaling Solutions', category: 'Technology', date: 'Mar 28, 2026', image: 'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?w=400&h=250&fit=crop' },
-    { title: 'The Future of DeFi in Emerging Markets', category: 'Finance', date: 'Mar 25, 2026', image: 'https://images.unsplash.com/photo-1622630998477-20aa696ecb05?w=400&h=250&fit=crop' },
-    { title: 'NFTs Beyond Art: Real-World Applications', category: 'Innovation', date: 'Mar 22, 2026', image: 'https://images.unsplash.com/photo-1639322537228-f710d846310a?w=400&h=250&fit=crop' },
+    {
+      title: "Understanding Layer 2 Scaling Solutions",
+      category: "Technology",
+      date: "Mar 28, 2026",
+      image:
+        "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?w=400&h=250&fit=crop",
+    },
+    {
+      title: "The Future of DeFi in Emerging Markets",
+      category: "Finance",
+      date: "Mar 25, 2026",
+      image:
+        "https://images.unsplash.com/photo-1622630998477-20aa696ecb05?w=400&h=250&fit=crop",
+    },
+    {
+      title: "NFTs Beyond Art: Real-World Applications",
+      category: "Innovation",
+      date: "Mar 22, 2026",
+      image:
+        "https://images.unsplash.com/photo-1639322537228-f710d846310a?w=400&h=250&fit=crop",
+    },
   ];
 
   return (
@@ -999,7 +1394,10 @@ const BlogPreview: React.FC = () => {
             Blog
           </span>
           <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-            Latest <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">Insights</span>
+            Latest{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
+              Insights
+            </span>
           </h2>
         </motion.div>
 
@@ -1015,12 +1413,20 @@ const BlogPreview: React.FC = () => {
               className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-purple-200 transition-all hover:shadow-lg"
             >
               <div className="relative h-44 overflow-hidden">
-                <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent" />
               </div>
               <div className="p-5">
-                <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">{p.category}</span>
-                <h3 className="font-bold text-gray-900 mt-2 mb-2 group-hover:text-purple-600 transition-colors line-clamp-2">{p.title}</h3>
+                <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">
+                  {p.category}
+                </span>
+                <h3 className="font-bold text-gray-900 mt-2 mb-2 group-hover:text-purple-600 transition-colors line-clamp-2">
+                  {p.title}
+                </h3>
                 <p className="text-xs text-gray-400">{p.date}</p>
               </div>
             </motion.div>
@@ -1047,7 +1453,8 @@ const CTASection: React.FC = () => (
         Ready to Build the <span className="text-white/80">Future?</span>
       </h2>
       <p className="text-white/80 text-lg mb-10 max-w-2xl mx-auto">
-        Start your journey into blockchain and Web3 mastery with structured, accessible education designed for Africa.
+        Start your journey into blockchain and Web3 mastery with structured,
+        accessible education designed for Africa.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Link
@@ -1069,7 +1476,11 @@ const CTASection: React.FC = () => (
 
 const ScrollProgressBar: React.FC = () => {
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
   return (
     <motion.div
@@ -1083,9 +1494,10 @@ const CursorGlow: React.FC = () => {
   const [pos, setPos] = useState({ x: -100, y: -100 });
 
   useEffect(() => {
-    const handleMove = (e: MouseEvent) => setPos({ x: e.clientX, y: e.clientY });
-    window.addEventListener('mousemove', handleMove);
-    return () => window.removeEventListener('mousemove', handleMove);
+    const handleMove = (e: MouseEvent) =>
+      setPos({ x: e.clientX, y: e.clientY });
+    window.addEventListener("mousemove", handleMove);
+    return () => window.removeEventListener("mousemove", handleMove);
   }, []);
 
   return (
@@ -1096,11 +1508,18 @@ const CursorGlow: React.FC = () => {
   );
 };
 
-const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({ onLogin }) => {
+const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({
+  onLogin,
+}) => {
   const [showSignInModal, setShowSignInModal] = useState(false);
 
   useEffect(() => {
     if (!authApi.isAuthenticated()) {
+      const dismissed = localStorage.getItem("signin_dismissed_at");
+      if (dismissed) {
+        const elapsed = Date.now() - parseInt(dismissed, 10);
+        if (elapsed < 24 * 60 * 60 * 1000) return;
+      }
       const timer = setTimeout(() => {
         setShowSignInModal(true);
       }, 3000);
@@ -1110,6 +1529,11 @@ const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({ onLogin }
 
   const handleLogin = (user: User) => {
     if (onLogin) onLogin(user);
+    setShowSignInModal(false);
+  };
+
+  const handleDismiss = () => {
+    localStorage.setItem("signin_dismissed_at", Date.now().toString());
     setShowSignInModal(false);
   };
 
@@ -1133,6 +1557,7 @@ const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({ onLogin }
         open={showSignInModal}
         onOpenChange={setShowSignInModal}
         onLogin={handleLogin}
+        onDismiss={handleDismiss}
       />
     </div>
   );

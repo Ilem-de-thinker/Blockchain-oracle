@@ -29,9 +29,10 @@ interface GoogleSignInModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onLogin: (user: User) => void;
+  onDismiss?: () => void;
 }
 
-const GoogleSignInModal: React.FC<GoogleSignInModalProps> = ({ open, onOpenChange, onLogin }) => {
+const GoogleSignInModal: React.FC<GoogleSignInModalProps> = ({ open, onOpenChange, onLogin, onDismiss }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [googleScriptLoaded, setGoogleScriptLoaded] = useState(false);
@@ -137,6 +138,7 @@ const GoogleSignInModal: React.FC<GoogleSignInModalProps> = ({ open, onOpenChang
   };
 
   const handleDismiss = () => {
+    onDismiss?.();
     onOpenChange(false);
   };
 
