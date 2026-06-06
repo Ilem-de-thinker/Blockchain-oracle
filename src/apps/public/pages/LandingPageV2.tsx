@@ -1021,22 +1021,22 @@ const EnterpriseServices: React.FC = () => {
   const services = [
     {
       title: "Staffing & Recruitment",
-      desc: "Blockchain talent sourcing and recruitment for technical and advisory roles.",
+      desc: "Blockchain talent sourcing and recruitment for technical and advisory roles",
       icon: "fas fa-users",
     },
     {
       title: "Tokenomics Design",
-      desc: "Economic modeling and tokenomics creation for blockchain-based business models.",
+      desc: "Economic modeling and tokenomics creation for blockchain-based business models",
       icon: "fas fa-chart-line",
     },
     {
       title: "Business Development",
-      desc: "Partnership strategy and business development support for blockchain adoption.",
+      desc: "Partnership strategy and business development support for blockchain adoption",
       icon: "fas fa-shield-alt",
     },
     {
       title: "Launch-to-Market Strategy",
-      desc: "Go-to-market strategy and launch planning for blockchain products and platforms.",
+      desc: "Go-to-market strategy and launch planning for blockchain products and platforms",
       icon: "fas fa-rocket",
     },
     {
@@ -1069,7 +1069,7 @@ const EnterpriseServices: React.FC = () => {
             </span>
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto mt-4">
-            From web 3 webiners and blockchain events to coperate training and consulting we support african enterprices in adopting emerging technologies
+            From web3 webiners and blockchain events to coperate training and consulting, we support african enterprices in adopting emerging technologies
           </p>
         </motion.div>
 
