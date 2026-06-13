@@ -1,0 +1,57 @@
+/* ============ PUBLIC PAGE STYLES ============ */
+/* These styles apply ONLY to public-facing pages (landing, auth, courses, etc.) */
+/* Scoped under body[data-page-type="public"] to avoid dashboard style leakage */
+
+body[data-page-type="public"] {
+  font-family: 'Space Grotesk', sans-serif;
+  background-color: #faf8ff !important;
+  color: #111827 !important;
+  background-image:
+    linear-gradient(rgba(124, 58, 237, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.07) 1px, transparent 1px);
+  background-size: 60px 60px;
+  background-position: center center;
+}
+
+/* ---- Purple unified backgrounds ---- */
+body[data-page-type="public"] .bg-gray-50 {
+  background-color: #faf8ff !important;
+}
+
+body[data-page-type="public"] [class*="bg-slate-50"] {
+  background-color: #faf8ff !important;
+}
+
+/* ---- Subtle purple for plain text links ---- */
+body[data-page-type="public"] p a:not(footer a),
+body[data-page-type="public"] li a:not(footer a),
+body[data-page-type="public"] .prose a:not(footer a) {
+  color: #7c3aed;
+}
+body[data-page-type="public"] p a:not(footer a):hover,
+body[data-page-type="public"] li a:not(footer a):hover,
+body[data-page-type="public"] .prose a:not(footer a):hover {
+  color: #6d28d9;
+}
+
+/* ---- Public page form inputs - clean, with purple focus ---- */
+body[data-page-type="public"] input,
+body[data-page-type="public"] textarea,
+body[data-page-type="public"] select {
+  background-color: #ffffff;
+  color: #111827;
+  border-color: #d1d5db;
+}
+
+body[data-page-type="public"] input::placeholder,
+body[data-page-type="public"] textarea::placeholder {
+  color: #9ca3af;
+}
+
+body[data-page-type="public"] input:focus,
+body[data-page-type="public"] textarea:focus,
+body[data-page-type="public"] select:focus {
+  outline: none;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
