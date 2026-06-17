@@ -8,6 +8,7 @@ import NetworkStatusBanner from '@/components/NetworkStatusBanner';
 import TelegramReminderPopup from '@/components/TelegramReminderPopup';
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary';
 import PublicFooter from '@/src/apps/public/components/PublicFooter';
+import MouseTracker from '@/components/MouseTracker';
 
 const Navbar: React.FC<{ user: User | null }> = ({ user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -198,13 +199,80 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   useEffect(() => {
     document.body.setAttribute('data-page-type', 'public');
     const html = document.documentElement;
-    const savedTheme = html.getAttribute('data-theme');
-    if (savedTheme && savedTheme !== 'light') {
-      html.setAttribute('data-theme', 'light');
-    }
+
+    // Save current inline styles set by ThemeContext so we can restore on unmount
+    const savedInlineVars: Record<string, string> = {};
+    const varsToReset = [
+      '--color-bg-raw', '--color-bg-secondary-raw',
+      '--color-surface-raw', '--color-surface-hover-raw', '--color-surface-active-raw', '--color-surface-alt-raw',
+      '--color-border-raw', '--color-border-hover-raw',
+      '--color-text-raw', '--color-text-secondary-raw', '--color-text-muted-raw', '--color-text-inverse-raw', '--color-text-link-raw',
+      '--color-white-raw', '--color-black-raw',
+      '--color-gray-100-raw', '--color-gray-200-raw', '--color-gray-300-raw', '--color-gray-400-raw',
+      '--color-gray-500-raw', '--color-gray-600-raw', '--color-gray-700-raw', '--color-gray-800-raw', '--color-gray-900-raw',
+      '--color-shadow-raw',
+    ];
+
+    // Capture current values before overriding
+    varsToReset.forEach((v) => {
+      savedInlineVars[v] = html.style.getPropertyValue(v);
+    });
+    const savedBodyBg = document.body.style.backgroundColor;
+    const savedBodyColor = document.body.style.color;
+    const savedDataTheme = html.getAttribute('data-theme');
+    const savedColorScheme = html.style.colorScheme;
+
+    // Force light theme CSS variables so public pages are never affected by dashboard theme
+    const lightColors: Record<string, string> = {
+      '--color-bg-raw': '#f5f0ff',
+      '--color-bg-secondary-raw': '#f8fafc',
+      '--color-surface-raw': '#ffffff',
+      '--color-surface-hover-raw': '#f9fafb',
+      '--color-surface-active-raw': '#f3f4f6',
+      '--color-surface-alt-raw': '#f1f5f9',
+      '--color-border-raw': '#e5e7eb',
+      '--color-border-hover-raw': '#d1d5db',
+      '--color-text-raw': '#111827',
+      '--color-text-secondary-raw': '#374151',
+      '--color-text-muted-raw': '#6b7280',
+      '--color-text-inverse-raw': '#ffffff',
+      '--color-text-link-raw': '#374151',
+      '--color-white-raw': '#ffffff',
+      '--color-black-raw': '#000000',
+      '--color-gray-100-raw': '#f3f4f6',
+      '--color-gray-200-raw': '#e5e7eb',
+      '--color-gray-300-raw': '#d1d5db',
+      '--color-gray-400-raw': '#9ca3af',
+      '--color-gray-500-raw': '#6b7280',
+      '--color-gray-600-raw': '#4b5563',
+      '--color-gray-700-raw': '#374151',
+      '--color-gray-800-raw': '#1f2937',
+      '--color-gray-900-raw': '#111827',
+      '--color-shadow-raw': 'rgba(0, 0, 0, 0.1)',
+    };
+
+    Object.entries(lightColors).forEach(([key, value]) => {
+      html.style.setProperty(key, value);
+    });
+    html.style.colorScheme = 'light';
+    html.setAttribute('data-theme', 'light');
+    document.body.style.backgroundColor = '#faf8ff';
+    document.body.style.color = '#111827';
+
     return () => {
-      if (savedTheme && savedTheme !== 'light') {
-        html.setAttribute('data-theme', savedTheme);
+      // Restore previous theme state
+      varsToReset.forEach((v) => {
+        if (savedInlineVars[v]) {
+          html.style.setProperty(v, savedInlineVars[v]);
+        } else {
+          html.style.removeProperty(v);
+        }
+      });
+      document.body.style.backgroundColor = savedBodyBg;
+      document.body.style.color = savedBodyColor;
+      html.style.colorScheme = savedColorScheme;
+      if (savedDataTheme) {
+        html.setAttribute('data-theme', savedDataTheme);
       }
     };
   }, []);
@@ -214,6 +282,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden">
+      <MouseTracker />
       <NetworkStatusBanner />
       {!hideChrome && !isLandingPage && <Navbar user={user} />}
       {!hideChrome && <TelegramReminderPopup user={user} />}

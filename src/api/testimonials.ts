@@ -37,7 +37,7 @@ const testimonialsApi = {
    * Submit a new testimonial (logged-in user)
    */
   submitTestimonial: async (data: SubmitTestimonialData): Promise<Testimonial> => {
-    const response = await apiClient.post('/api/core/testimonial/submit/', data);
+    const response = await apiClient.post('/api/testimonials/submit/', data);
     return response.data;
   },
 
@@ -45,7 +45,7 @@ const testimonialsApi = {
    * Get my testimonials (logged-in user)
    */
   getMyTestimonials: async (): Promise<TestimonialListResponse> => {
-    const response = await apiClient.get('/api/core/testimonial/my/');
+    const response = await apiClient.get('/api/testimonials/my/');
     return response.data;
   },
 
@@ -53,7 +53,7 @@ const testimonialsApi = {
    * Update my testimonial (owner only)
    */
   updateMyTestimonial: async (id: number, data: Partial<SubmitTestimonialData>): Promise<Testimonial> => {
-    const response = await apiClient.patch(`/api/core/testimonial/${id}/`, data);
+    const response = await apiClient.patch(`/api/testimonials/${id}/`, data);
     return response.data;
   },
 
@@ -61,7 +61,7 @@ const testimonialsApi = {
    * Delete my testimonial (owner only)
    */
   deleteMyTestimonial: async (id: number): Promise<void> => {
-    await apiClient.delete(`/api/core/testimonial/${id}/`);
+    await apiClient.delete(`/api/testimonials/${id}/`);
   },
 
   /**
@@ -70,7 +70,7 @@ const testimonialsApi = {
   getPublicTestimonials: async (limit?: number): Promise<Testimonial[]> => {
     const params = new URLSearchParams();
     if (limit) params.append('limit', limit.toString());
-    const response = await apiClient.get(`/api/core/testimonial/public/?${params.toString()}`);
+    const response = await apiClient.get(`/api/testimonials/public/?${params.toString()}`);
     return response.data;
   },
 
@@ -89,7 +89,7 @@ const testimonialsApi = {
     if (status) params.append('status', status);
     if (isPublic !== undefined) params.append('is_public', isPublic.toString());
 
-    const response = await apiClient.get(`/api/core/testimonial/admin/?${params.toString()}`);
+    const response = await apiClient.get(`/api/testimonials/admin/?${params.toString()}`);
     return response.data;
   },
 
@@ -97,7 +97,7 @@ const testimonialsApi = {
    * Admin: Update testimonial status (approve/reject)
    */
   updateTestimonialStatus: async (id: number, status: 'approved' | 'rejected'): Promise<Testimonial> => {
-    const response = await apiClient.patch(`/api/core/testimonial/${id}/status/`, { status });
+    const response = await apiClient.patch(`/api/testimonials/${id}/status/`, { status });
     return response.data;
   },
 
@@ -105,7 +105,7 @@ const testimonialsApi = {
    * Admin: Update testimonial
    */
   updateTestimonial: async (id: number, data: Partial<Testimonial>): Promise<Testimonial> => {
-    const response = await apiClient.patch(`/api/core/testimonial/${id}/`, data);
+    const response = await apiClient.patch(`/api/testimonials/${id}/`, data);
     return response.data;
   },
 
@@ -113,14 +113,14 @@ const testimonialsApi = {
    * Admin: Delete testimonial
    */
   deleteTestimonial: async (id: number): Promise<void> => {
-    await apiClient.delete(`/api/core/testimonial/${id}/`);
+    await apiClient.delete(`/api/testimonials/${id}/`);
   },
 
   /**
    * Admin: Reorder testimonials
    */
   reorderTestimonials: async (order: number[]): Promise<{ message: string }> => {
-    const response = await apiClient.post('/api/core/testimonial/reorder/', { order });
+    const response = await apiClient.post('/api/testimonials/reorder/', { order });
     return response.data;
   },
 };

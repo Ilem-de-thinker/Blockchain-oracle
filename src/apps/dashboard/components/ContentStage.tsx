@@ -39,6 +39,7 @@ export default function ContentStage({ material, course, reviews, onComplete, is
     setIsTabsExpanded(false);
   };
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [pdfProgress, setPdfProgress] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [msgTitle, setMsgTitle] = useState('');
@@ -75,6 +76,7 @@ export default function ContentStage({ material, course, reviews, onComplete, is
   useEffect(() => {
     if (!material) return;
     setScrollProgress(0);
+    setPdfProgress(0);
     setActiveTab('content');
     setIsTabsExpanded(false);
     if (scrollContainerRef.current) {
@@ -138,7 +140,9 @@ export default function ContentStage({ material, course, reviews, onComplete, is
         return <VideoPlayer url={material.url!} />;
       case 'pdf':
         if (material.url) {
-          return <PDFViewer url={material.url} />;
+          return <PDFViewer url={material.url} onPageChange={(page, total) => {
+            setPdfProgress(total > 0 ? Math.min(Math.round((page / total) * 100), 100) : 0);
+          }} />;
         }
         return (
           <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center px-8">
@@ -389,13 +393,13 @@ export default function ContentStage({ material, course, reviews, onComplete, is
                   {material.type !== 'video' && (
                     <>
                       <div className="flex items-center justify-between w-full text-[10px] font-black uppercase tracking-widest text-text-muted">
-                        <span>Reading Progress</span>
-                        <span>{Math.round(scrollProgress)}%</span>
+                        <span>{material.type === 'pdf' ? 'Page Progress' : 'Reading Progress'}</span>
+                        <span>{material.type === 'pdf' ? pdfProgress : Math.round(scrollProgress)}%</span>
                       </div>
                       <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
-                          animate={{ width: `${scrollProgress}%` }}
+                          animate={{ width: `${material.type === 'pdf' ? pdfProgress : scrollProgress}%` }}
                           className="h-full bg-emerald-500"
                         />
                       </div>

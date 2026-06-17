@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import testimonialsApi, { Testimonial } from '../../src/api/testimonials';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../components/ui/dialog';
 import { useToast } from '../../src/hooks/useToast';
 import {
   MessageSquare,
@@ -16,6 +17,7 @@ import {
   X,
   ChevronDown,
   ArrowUpDown,
+  Maximize2,
 } from 'lucide-react';
 
 const SuperAdminTestimonialsPage: React.FC = () => {
@@ -26,6 +28,8 @@ const SuperAdminTestimonialsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+  const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
   const pageSize = 20;
 
   const loadTestimonials = useCallback(async () => {
@@ -254,6 +258,15 @@ const SuperAdminTestimonialsPage: React.FC = () => {
                   <Button
                     variant="ghost"
                     size="sm"
+                    onClick={() => { setSelectedTestimonial(testimonial); setViewModalOpen(true); }}
+                    className="h-8 w-8 p-0"
+                    title="View full testimonial"
+                  >
+                    <Maximize2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => handleTogglePublic(testimonial.id, testimonial.is_public)}
                     className="h-8 w-8 p-0"
                     title={testimonial.is_public ? 'Set to private' : 'Set to public'}
@@ -340,6 +353,58 @@ const SuperAdminTestimonialsPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* View Testimonial Modal */}
+      <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Testimonial Details</DialogTitle>
+            <DialogDescription>Full testimonial submitted by the user</DialogDescription>
+          </DialogHeader>
+          {selectedTestimonial && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 flex-wrap">
+                {getStatusBadge(selectedTestimonial.status)}
+                {selectedTestimonial.is_public ? (
+                  <Badge className="bg-blue-100 text-blue-700 border-blue-200"><Eye className="w-3 h-3 mr-1" /> Public</Badge>
+                ) : (
+                  <Badge className="bg-gray-100 text-gray-500 border-gray-200"><EyeOff className="w-3 h-3 mr-1" /> Private</Badge>
+                )}
+              </div>
+
+              <div className="bg-surface-alt/50 rounded-lg p-4 border border-border">
+                <p className="text-sm text-text leading-relaxed italic">"{selectedTestimonial.quote}"</p>
+              </div>
+
+              <div className="flex items-center gap-3 text-xs text-text-muted">
+                {selectedTestimonial.user ? (
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={selectedTestimonial.user.profile_picture || `https://i.pravatar.cc/100?u=${selectedTestimonial.user.email}`}
+                      alt={selectedTestimonial.user.full_name}
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <div>
+                      <p className="font-medium text-text">{selectedTestimonial.user.full_name}</p>
+                      <p className="text-[10px]">{selectedTestimonial.user.role} &middot; {selectedTestimonial.user.email}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="font-medium text-text">{selectedTestimonial.name || 'Anonymous'}</p>
+                    {selectedTestimonial.role && <p className="text-[10px]">{selectedTestimonial.role}</p>}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-4 text-[10px] text-text-muted pt-2 border-t border-border">
+                <span>Submitted: {new Date(selectedTestimonial.created_at).toLocaleString()}</span>
+                <span>Updated: {new Date(selectedTestimonial.updated_at).toLocaleString()}</span>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

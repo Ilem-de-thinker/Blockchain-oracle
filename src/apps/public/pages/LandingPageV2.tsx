@@ -6,6 +6,7 @@ import { Autoplay, EffectFade, Parallax } from "swiper/modules";
 import { authApi, mapBackendRoleToFrontend } from "@/src/api/auth";
 import { coursesApi, Course } from "@/src/api/courses";
 import eventsApi, { Event as ApiEvent } from "@/src/api/events";
+import testimonialsApi, { Testimonial } from "@/src/api/testimonials";
 import { UserRole, User } from "@/types";
 import GoogleSignInModal from "@/components/GoogleSignInModal";
 import LogoText from "@/components/LogoText";
@@ -13,57 +14,6 @@ import LogoText from "@/components/LogoText";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/parallax";
-
-const testimonialsData = [
-  {
-    name: "Ita Otu",
-    role: "Blockchain Architect",
-    image:
-      "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000",
-    quote:
-      "The community features make learning social and engaging. I've made great connections with fellow learners",
-  },
-  {
-    name: "Effiom Bassey",
-    role: "Blockchain Developer",
-    image:
-      "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000",
-    quote:
-      "AlphaKing Oracle transformed my learning experience. The AI-powered guidance helped me choose the perfect course path",
-  },
-  {
-    name: "Uyai Ekpo",
-    role: "DeFi Analyst",
-    image:
-      "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000",
-    quote:
-      "The personalized learning paths really helped me stay focused and motivated throughout my courses ",
-  },
-  {
-    name: "Idara Edet",
-    role: "Smart Contract Engineer",
-    image:
-      "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000",
-    quote:
-      "The project-based learning approach is fantastic. I've gained practical skills that I'm already using in my career",
-  },
-  {
-    name: "Ekaette Eyo",
-    role: "Crypto Analyst",
-    image:
-      "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000",
-    quote:
-      "The AI mentor provided valuable feedback that helped me improve my coding skills significantly",
-  },
-  {
-    name: "Okon Ubi",
-    role: "Web3 Developer",
-    image:
-      "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000",
-    quote:
-      "Great platform for self-paced learning. The interactive exercises really help reinforce the concepts",
-  },
-];
 
 const CountdownTimer: React.FC<{ targetDate: string }> = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
@@ -563,32 +513,32 @@ const HeroSection: React.FC = () => (
 const partners = [
   {
     name: "Binance",
-    logo: "https://cryptologos.cc/logos/binance-coin-bnb-logo.svg",
+    logo: "/crypto-logos/bnb.svg",
   },
   {
     name: "Ethereum",
-    logo: "https://cryptologos.cc/logos/ethereum-eth-logo.svg",
+    logo: "/crypto-logos/eth.svg",
   },
   {
     name: "Polygon",
-    logo: "https://cryptologos.cc/logos/polygon-matic-logo.svg",
+    logo: "/crypto-logos/polygon.svg",
   },
-  { name: "Solana", logo: "https://cryptologos.cc/logos/solana-sol-logo.svg" },
+  { name: "Solana", logo: "/crypto-logos/solana.svg" },
   {
     name: "Chainlink",
-    logo: "https://cryptologos.cc/logos/chainlink-link-logo.svg",
+    logo: "/crypto-logos/chainlink.svg",
   },
   {
     name: "Cardano",
-    logo: "https://cryptologos.cc/logos/cardano-ada-logo.svg",
+    logo: "/crypto-logos/cardano.svg",
   },
   {
     name: "Polkadot",
-    logo: "https://cryptologos.cc/logos/polkadot-new-dot-logo.svg",
+    logo: "/crypto-logos/polkadot.svg",
   },
   {
     name: "Avalanche",
-    logo: "https://cryptologos.cc/logos/avalanche-avax-logo.svg",
+    logo: "/crypto-logos/avalanche.svg",
   },
 ];
 
@@ -1265,33 +1215,42 @@ const EventsWebinars: React.FC = () => {
 };
 
 const TestimonialCard: React.FC<{
-  testimonial: (typeof testimonialsData)[0];
-}> = ({ testimonial }) => (
-  <div className="bg-white p-6 rounded-2xl shadow-lg shadow-purple-100/50 border border-gray-100 hover:border-purple-200 transition-all flex-shrink-0 mx-2 my-3">
-    <div className="flex items-center gap-1 mb-3">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <i key={i} className="fas fa-star text-yellow-400 text-xs"></i>
-      ))}
-    </div>
-    <p className="text-gray-600 text-sm leading-relaxed mb-4">
-      "{testimonial.quote}"
-    </p>
-    <div className="flex items-center gap-3">
-      <img
-        src={testimonial.image}
-        alt={testimonial.name}
-        className="w-10 h-10 rounded-full"
-      />
-      <div>
-        <h4 className="font-bold text-gray-900 text-sm">{testimonial.name}</h4>
-        <p className="text-xs text-gray-500">{testimonial.role}</p>
+  testimonial: Testimonial;
+}> = ({ testimonial }) => {
+  const name = testimonial.user?.full_name || testimonial.name || "Anonymous";
+  const role = testimonial.user?.role || testimonial.role || "";
+  const image =
+    testimonial.user?.profile_picture ||
+    testimonial.image ||
+    `https://i.pravatar.cc/100?u=${name}`;
+
+  return (
+    <div className="bg-white p-6 rounded-2xl shadow-lg shadow-purple-100/50 border border-gray-100 hover:border-purple-200 transition-all flex-shrink-0 mx-2 my-3">
+      <div className="flex items-center gap-1 mb-3">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <i key={i} className="fas fa-star text-yellow-400 text-xs"></i>
+        ))}
+      </div>
+      <p className="text-gray-600 text-sm leading-relaxed mb-4">
+        &ldquo;{testimonial.quote}&rdquo;
+      </p>
+      <div className="flex items-center gap-3">
+        <img
+          src={image}
+          alt={name}
+          className="w-10 h-10 rounded-full"
+        />
+        <div>
+          <h4 className="font-bold text-gray-900 text-sm">{name}</h4>
+          <p className="text-xs text-gray-500">{role}</p>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const ScrollingCarousel: React.FC<{
-  testimonials: typeof testimonialsData;
+  testimonials: Testimonial[];
   direction: "up" | "down";
   speed: number;
 }> = ({ testimonials, direction, speed }) => {
@@ -1332,55 +1291,108 @@ const ScrollingCarousel: React.FC<{
   );
 };
 
-const TestimonialsSection: React.FC = () => (
-  <section id="testimonials" className="py-32 bg-white">
-    <div className="max-w-7xl mx-auto px-6">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center mb-16"
-      >
-        <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
-          Testimonials
-        </span>
-        <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-          What Our{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
-            Students
-          </span>{" "}
-          Say
-        </h2>
-      </motion.div>
+const TestimonialsSection: React.FC = () => {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
 
-      <div className="lg:grid lg:grid-cols-3 gap-8 hidden">
-        <ScrollingCarousel
-          testimonials={testimonialsData.slice(0, 2)}
-          direction="up"
-          speed={25}
-        />
-        <ScrollingCarousel
-          testimonials={testimonialsData.slice(2, 4)}
-          direction="down"
-          speed={25}
-        />
-        <ScrollingCarousel
-          testimonials={testimonialsData.slice(4, 6)}
-          direction="up"
-          speed={25}
-        />
-      </div>
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const data = await testimonialsApi.getPublicTestimonials();
+        setTestimonials(data);
+      } catch {
+        setTestimonials([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTestimonials();
+  }, []);
 
-      <div className="lg:hidden">
-        <ScrollingCarousel
-          testimonials={testimonialsData}
-          direction="up"
-          speed={40}
-        />
+  const useCarousel = testimonials.length > 5;
+
+  const renderHeader = () => (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="text-center mb-16"
+    >
+      <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+        Testimonials
+      </span>
+      <h2 className="text-4xl md:text-5xl font-black text-gray-900">
+        What Our{" "}
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
+          Students
+        </span>{" "}
+        Say
+      </h2>
+    </motion.div>
+  );
+
+  if (loading) {
+    return (
+      <section id="testimonials" className="py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          {renderHeader()}
+          <div className="flex items-center justify-center min-h-[200px]">
+            <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (testimonials.length === 0) {
+    return (
+      <section id="testimonials" className="py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          {renderHeader()}
+          <p className="text-center text-gray-500 text-sm">
+            No testimonials yet. Check back soon!
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  if (!useCarousel) {
+    return (
+      <section id="testimonials" className="py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          {renderHeader()}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {testimonials.map((t) => (
+              <TestimonialCard key={t.id} testimonial={t} />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const chunkSize = Math.ceil(testimonials.length / 3);
+  const col1 = testimonials.slice(0, chunkSize);
+  const col2 = testimonials.slice(chunkSize, chunkSize * 2);
+  const col3 = testimonials.slice(chunkSize * 2);
+
+  return (
+    <section id="testimonials" className="py-32 bg-white">
+      <div className="max-w-7xl mx-auto px-6">
+        {renderHeader()}
+        <div className="lg:grid lg:grid-cols-3 gap-8 hidden">
+          <ScrollingCarousel testimonials={col1} direction="up" speed={25} />
+          <ScrollingCarousel testimonials={col2} direction="down" speed={25} />
+          <ScrollingCarousel testimonials={col3} direction="up" speed={25} />
+        </div>
+        <div className="lg:hidden">
+          <ScrollingCarousel testimonials={testimonials} direction="up" speed={40} />
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const BlogPreview: React.FC = () => {
   const posts = [
@@ -1516,24 +1528,6 @@ const ScrollProgressBar: React.FC = () => {
   );
 };
 
-const CursorGlow: React.FC = () => {
-  const [pos, setPos] = useState({ x: -100, y: -100 });
-
-  useEffect(() => {
-    const handleMove = (e: MouseEvent) =>
-      setPos({ x: e.clientX, y: e.clientY });
-    window.addEventListener("mousemove", handleMove);
-    return () => window.removeEventListener("mousemove", handleMove);
-  }, []);
-
-  return (
-    <div
-      className="fixed pointer-events-none z-[100] w-32 h-32 rounded-full bg-purple-400/30 blur-2xl"
-      style={{ left: pos.x - 64, top: pos.y - 64 }}
-    />
-  );
-};
-
 const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({
   onLogin,
 }) => {
@@ -1565,7 +1559,6 @@ const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({
 
   return (
     <div className="bg-white min-h-screen text-gray-900 overflow-x-hidden">
-      <CursorGlow />
       <ScrollProgressBar />
       <Navbar />
       <HeroSection />

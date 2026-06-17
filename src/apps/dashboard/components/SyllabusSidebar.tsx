@@ -1,17 +1,19 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CheckCircle2, Circle, Lock, Video, FileText, Type, ChevronDown, Sparkles, X, ClipboardList, TriangleAlert, User, Send, Star, AlertCircle } from 'lucide-react';
+import { CheckCircle2, Circle, Lock, Video, FileText, Type, ChevronDown, Sparkles, X, ClipboardList, TriangleAlert, User, Send, Star, AlertCircle, Award } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { CourseModule, CourseMaterial, Course } from '@/src/api/courses';
 import type { QuizResult } from '@/src/api/quizzes';
 import type { Review } from '@/src/api/reviews';
 import { useToast } from '@/src/hooks/useToast';
+import { certificatesApi } from '@/src/api/certificates';
 
 type MaterialType = 'video' | 'pdf' | 'text';
 
 interface ModuleAccessItem {
-  module_id: number;
+  id: number;
+  module_id?: number;
   is_locked: boolean;
   access_threshold?: number;
 }
@@ -27,6 +29,7 @@ interface SyllabusSidebarProps {
   quizResults?: QuizResult[];
   moduleAccess?: ModuleAccessItem[];
   enrollment?: {
+    id: number;
     installment_plan: string;
     amount_paid: string;
     balance_remaining: string;
@@ -59,6 +62,7 @@ export default function SyllabusSidebar({ modules, materials, currentMaterialId,
       return [];
     }
   });
+  const [isPrintingCert, setIsPrintingCert] = React.useState(false);
 
   React.useEffect(() => {
     if (!courseId) return;
@@ -69,7 +73,7 @@ export default function SyllabusSidebar({ modules, materials, currentMaterialId,
 
   const isModuleLocked = (moduleId: number): boolean => {
     if (!moduleAccess) return false;
-    const access = moduleAccess.find(m => m.module_id === moduleId);
+    const access = moduleAccess.find(m => (m.id ?? m.module_id) === moduleId);
     return access?.is_locked ?? false;
   };
 
@@ -105,6 +109,19 @@ export default function SyllabusSidebar({ modules, materials, currentMaterialId,
     );
   };
 
+  const handlePrintCertificate = async () => {
+    if (!enrollment?.id) return;
+    setIsPrintingCert(true);
+    try {
+      await certificatesApi.downloadEnrollmentCertificate(enrollment.id);
+      toast.success('Certificate downloaded!');
+    } catch {
+      toast.error('Failed to download certificate');
+    } finally {
+      setIsPrintingCert(false);
+    }
+  };
+
   return (
     <motion.div
       initial={false}
@@ -114,8 +131,8 @@ export default function SyllabusSidebar({ modules, materials, currentMaterialId,
       }}
       transition={{ type: "spring", damping: 30, stiffness: 300 }}
       className={`
-        bg-surface border-l border-border h-full overflow-hidden flex flex-col z-40
-        ${isOpen && typeof window !== 'undefined' && window.innerWidth < 1024 ? 'fixed top-14 right-0 bottom-0 shadow-2xl' : 'relative'}
+        bg-surface border-l border-border overflow-hidden flex flex-col z-40
+        ${isOpen && typeof window !== 'undefined' && window.innerWidth < 1024 ? 'fixed top-14 right-0 bottom-[5rem] shadow-2xl' : 'h-full relative'}
       `}
     >
       <div className="p-5 md:p-6 border-b border-border flex items-center justify-between shrink-0">
@@ -145,6 +162,9 @@ export default function SyllabusSidebar({ modules, materials, currentMaterialId,
                 className={`w-full flex items-center gap-2 px-1 py-2 group transition-colors ${isExpanded ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`}
               >
                 <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">Section {idx + 1}</span>
+                {isModuleLocked(module.id) && (
+                  <Lock size={12} className="text-amber-500" />
+                )}
                 <div className="h-[1px] flex-1 bg-border"></div>
                 <motion.div
                   animate={{ rotate: isExpanded ? 0 : -90 }}
@@ -331,6 +351,16 @@ export default function SyllabusSidebar({ modules, materials, currentMaterialId,
                       />
                     </div>
                   </div>
+                )}
+                {allComplete && enrollment?.id && (
+                  <button
+                    onClick={handlePrintCertificate}
+                    disabled={isPrintingCert}
+                    className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-600 text-white text-[11px] font-black uppercase tracking-widest hover:bg-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <Award size={14} />
+                    {isPrintingCert ? 'Downloading...' : 'Print Certificate'}
+                  </button>
                 )}
               </div>
             </div>

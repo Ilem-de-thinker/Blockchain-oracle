@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, Loader2, Maximize2, Minimize2 } from 'lucide
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
-export default function PDFViewer({ url }: { url: string }) {
+export default function PDFViewer({ url, onPageChange }: { url: string; onPageChange?: (page: number, totalPages: number) => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [pdf, setPdf] = useState<any>(null);
@@ -29,6 +29,7 @@ export default function PDFViewer({ url }: { url: string }) {
         const pdfDoc = await loadingTask.promise;
         setPdf(pdfDoc);
         setNumPages(pdfDoc.numPages);
+        onPageChange?.(1, pdfDoc.numPages);
       } catch (err) {
         console.error('Failed to load PDF:', err);
       } finally {
@@ -110,6 +111,12 @@ export default function PDFViewer({ url }: { url: string }) {
   useEffect(() => {
     renderPage();
   }, [renderPage]);
+
+  useEffect(() => {
+    if (numPages > 0) {
+      onPageChange?.(pageNum, numPages);
+    }
+  }, [pageNum, numPages]);
 
   useEffect(() => {
     const observer = new ResizeObserver(renderPage);

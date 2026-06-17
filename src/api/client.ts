@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { parseApiError } from './errorHandler';
 
 // Use environment variable or default to production
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://backend-blockchain-oracle.vercel.app';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://backend-blockchain-oracle-3agf.vercel.app';
 
 const isDevelopment = import.meta.env.DEV;
 

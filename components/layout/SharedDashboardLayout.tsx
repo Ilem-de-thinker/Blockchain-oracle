@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { User } from '@/types';
 import { AppShell } from '@/components/layout';
 import FloatingChatSupport from '@/components/ui/chat-support';
+import MouseTracker from '@/components/MouseTracker';
 
 interface SharedDashboardLayoutProps {
   children: React.ReactNode;
@@ -38,6 +39,7 @@ const SharedDashboardLayout: React.FC<SharedDashboardLayoutProps> = ({
       defaultActiveIcon={activeIcon}
 
     >
+      <MouseTracker />
       <div className="min-h-screen ">
         {children}
       </div>
