@@ -7,8 +7,10 @@ const PublicFooter: React.FC = () => (
     <div className="max-w-7xl mx-auto px-6">
       <div className="grid md:grid-cols-4 gap-12 mb-12">
         <div className="space-y-4">
-          <Link to="/" className="flex items-center gap-2">
-            <LogoText variant="footer" size="lg" showIcon={true} />
+          <Link to="/" className="flex items-center gap-2 max-w-full overflow-hidden">
+            <div className="scale-[0.7] sm:scale-100 origin-left">
+              <LogoText variant="footer" size="lg" showIcon={true} />
+            </div>
           </Link>
           <p className="text-sm text-white/60 leading-relaxed">
             Africa's Premiere Blockchain and Cryptocurrency Adoption Hub.

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { User } from '../../../types';
-import eventsApi, { Event as ApiEvent } from '../../../src/api/events';
+import eventsApi, { Event as ApiEvent, EventApplication } from '../../../src/api/events';
 import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
