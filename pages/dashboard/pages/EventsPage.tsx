@@ -61,9 +61,12 @@ const mapBackendEventToFrontend = (event: ApiEvent): Event => {
   };
 };
 
+const CALENDAR_PAGE_SIZE = 200;
+
 const EventsPage: React.FC<{ user: User | null }> = ({ user }) => {
   const [filter, setFilter] = useState('all');
   const [events, setEvents] = useState<Event[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
@@ -96,6 +99,16 @@ const EventsPage: React.FC<{ user: User | null }> = ({ user }) => {
     loadEvents(currentPage);
   }, [currentPage, loadEvents]);
 
+  const loadCalendarEvents = useCallback(async () => {
+    try {
+      const typeParam = filter === 'all' ? undefined : filter;
+      const data = await eventsApi.getEvents(1, CALENDAR_PAGE_SIZE, typeParam);
+      setCalendarEvents(data.results.map(mapBackendEventToFrontend));
+    } catch (error) {
+      console.error('Failed to load calendar events:', error);
+    }
+  }, [filter]);
+
   const handleFilterChange = (setter: React.Dispatch<React.SetStateAction<string>>, value: string) => {
     setter(value);
     setCurrentPage(1);
@@ -114,6 +127,7 @@ const EventsPage: React.FC<{ user: User | null }> = ({ user }) => {
       }
 
       setEvents(events.map(e => e.id === id ? { ...e, registered: true } : e));
+      setCalendarEvents(prev => prev.map(e => e.id === id ? { ...e, registered: true } : e));
       toast.success('Event registration completed.');
     } catch (error) {
       toast.error('Failed to register for event.');
@@ -221,7 +235,7 @@ const EventsPage: React.FC<{ user: User | null }> = ({ user }) => {
       </div>
 
       {/* TABS: List / Calendar */}
-      <Tabs defaultValue="list" className="w-full">
+      <Tabs defaultValue="list" onValueChange={(v) => v === 'calendar' && loadCalendarEvents()} className="w-full">
         <div className="flex items-center justify-between mb-4">
           <TabsList>
             <TabsTrigger value="list" className="text-xs gap-1.5">
@@ -328,10 +342,7 @@ const EventsPage: React.FC<{ user: User | null }> = ({ user }) => {
 
         <TabsContent value="calendar">
           <CalendarView
-            events={filteredEvents.map(e => ({
-              ...e,
-              rawDate: e.rawDate,
-            }))}
+            events={calendarEvents}
             onRegister={handleRegister}
           />
         </TabsContent>
