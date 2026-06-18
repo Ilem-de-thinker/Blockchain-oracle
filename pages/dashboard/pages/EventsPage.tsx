@@ -6,6 +6,8 @@ import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { useToast } from '../../../src/hooks/useToast';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../components/ui/tabs';
+import CalendarView from '../../../components/events/CalendarView';
 import {
   Calendar,
   Search,
@@ -18,6 +20,7 @@ import {
   X,
   Video,
   CheckCircle,
+  LayoutGrid,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Pagination from '../../../components/ui/Pagination';
@@ -35,6 +38,7 @@ interface Event {
   is_online: boolean;
   capacity: number;
   registrations_count: number;
+  rawDate: Date;
 }
 
 const mapBackendEventToFrontend = (event: ApiEvent): Event => {
@@ -53,6 +57,7 @@ const mapBackendEventToFrontend = (event: ApiEvent): Event => {
     is_online: event.is_online,
     capacity: event.capacity || 100,
     registrations_count: event.registrations_count || 0,
+    rawDate: date,
   };
 };
 
@@ -215,97 +220,122 @@ const EventsPage: React.FC<{ user: User | null }> = ({ user }) => {
         </div>
       </div>
 
-      {/* EVENTS GRID */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {loading && events.length === 0 ? (
-          <div className="col-span-full py-12 flex justify-center"><RefreshCcw className="h-10 w-10 animate-spin text-purple-600" /></div>
-        ) : filteredEvents.length > 0 ? (
-          filteredEvents.map((event) => (
-            <div key={event.id} className="bg-surface/80 backdrop-blur-md border border-border/50 rounded-xl shadow-md hover:shadow-xl flex flex-col h-full active:scale-[0.99] transition-all">
-              <div className="relative p-4 pb-0">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      {event.registered && <Badge variant="success" className="px-2 py-0.5 text-[9px] font-semibold uppercase">Going</Badge>}
-                      <Badge className={cn("px-2 py-0.5 text-[9px] font-semibold uppercase border-none", getEventTypeColor(event.type))}>
-                        {event.type}
-                      </Badge>
-                    </div>
-                    <h3 className="line-clamp-2 text-sm font-semibold tracking-tight text-text">{event.title}</h3>
-                    <p className="mt-0.5 text-xs text-text-secondary line-clamp-1">With {event.speaker}</p>
-                  </div>
-                  <div className="shrink-0">
-                    <img
-                      src={event.image}
-                      alt=""
-                      className="h-16 w-16 rounded-lg object-cover border border-border/50 sm:h-20 sm:w-20"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 pt-3 flex-1 flex flex-col justify-between">
-                <div className="mb-3 space-y-2">
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-text-secondary">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3 text-teal-500" />
-                      {event.date}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3 text-teal-500" />
-                      {event.time}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-[10px] text-text-secondary">
-                    {event.is_online ? <Video className="h-3 w-3 text-teal-500" /> : <MapPin className="h-3 w-3 text-teal-500" />}
-                    <span className="truncate">{event.location}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-3 pt-2 border-t border-border/50">
-                    <div className="text-[10px] font-semibold text-text">
-                      {event.registrations_count}/{event.capacity} <span className="text-text-muted font-medium">spots</span>
-                    </div>
-                    {event.registered ? (
-                      <Link to={`/dashboard/events/${event.id}`}>
-                        <Button variant="outline" size="sm" className="h-9 px-4 text-xs font-semibold gap-1.5">
-                          <Eye className="h-3.5 w-3.5" /> Details
-                        </Button>
-                      </Link>
-                    ) : (
-                      <Button
-                        size="sm"
-                        className="h-9 px-4 text-xs font-semibold text-white"
-                        onClick={() => handleRegister(event.id)}
-                      >
-                        Register
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-16 bg-surface/80 backdrop-blur-md border-2 border-dashed border-border/50 rounded-xl">
-            <Calendar className="h-12 w-12 mx-auto mb-4 text-text-muted opacity-20" />
-            <p className="text-sm font-semibold tracking-tight text-text">No events found</p>
-          </div>
-        )}
-      </div>
-
-      {totalPages > 1 && (
-        <div className="mt-8">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalItems={totalItems}
-            pageSize={pageSize}
-            onPageChange={setCurrentPage}
-          />
+      {/* TABS: List / Calendar */}
+      <Tabs defaultValue="list" className="w-full">
+        <div className="flex items-center justify-between mb-4">
+          <TabsList>
+            <TabsTrigger value="list" className="text-xs gap-1.5">
+              <LayoutGrid className="h-3.5 w-3.5" /> List
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="text-xs gap-1.5">
+              <Calendar className="h-3.5 w-3.5" /> Calendar
+            </TabsTrigger>
+          </TabsList>
         </div>
-      )}
+
+        <TabsContent value="list">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {loading && events.length === 0 ? (
+              <div className="col-span-full py-12 flex justify-center"><RefreshCcw className="h-10 w-10 animate-spin text-purple-600" /></div>
+            ) : filteredEvents.length > 0 ? (
+              filteredEvents.map((event) => (
+                <div key={event.id} className="bg-surface/80 backdrop-blur-md border border-border/50 rounded-xl shadow-md hover:shadow-xl flex flex-col h-full active:scale-[0.99] transition-all">
+                  <div className="relative p-4 pb-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          {event.registered && <Badge variant="success" className="px-2 py-0.5 text-[9px] font-semibold uppercase">Going</Badge>}
+                          <Badge className={cn("px-2 py-0.5 text-[9px] font-semibold uppercase border-none", getEventTypeColor(event.type))}>
+                            {event.type}
+                          </Badge>
+                        </div>
+                        <h3 className="line-clamp-2 text-sm font-semibold tracking-tight text-text">{event.title}</h3>
+                        <p className="mt-0.5 text-xs text-text-secondary line-clamp-1">With {event.speaker}</p>
+                      </div>
+                      <div className="shrink-0">
+                        <img
+                          src={event.image}
+                          alt=""
+                          className="h-16 w-16 rounded-lg object-cover border border-border/50 sm:h-20 sm:w-20"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 pt-3 flex-1 flex flex-col justify-between">
+                    <div className="mb-3 space-y-2">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-text-secondary">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3 text-teal-500" />
+                          {event.date}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3 text-teal-500" />
+                          {event.time}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] text-text-secondary">
+                        {event.is_online ? <Video className="h-3 w-3 text-teal-500" /> : <MapPin className="h-3 w-3 text-teal-500" />}
+                        <span className="truncate">{event.location}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between gap-3 pt-2 border-t border-border/50">
+                        <div className="text-[10px] font-semibold text-text">
+                          {event.registrations_count}/{event.capacity} <span className="text-text-muted font-medium">spots</span>
+                        </div>
+                        {event.registered ? (
+                          <Link to={`/dashboard/events/${event.id}`}>
+                            <Button variant="outline" size="sm" className="h-9 px-4 text-xs font-semibold gap-1.5">
+                              <Eye className="h-3.5 w-3.5" /> Details
+                            </Button>
+                          </Link>
+                        ) : (
+                          <Button
+                            size="sm"
+                            className="h-9 px-4 text-xs font-semibold text-white"
+                            onClick={() => handleRegister(event.id)}
+                          >
+                            Register
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-16 bg-surface/80 backdrop-blur-md border-2 border-dashed border-border/50 rounded-xl">
+                <Calendar className="h-12 w-12 mx-auto mb-4 text-text-muted opacity-20" />
+                <p className="text-sm font-semibold tracking-tight text-text">No events found</p>
+              </div>
+            )}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                pageSize={pageSize}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="calendar">
+          <CalendarView
+            events={filteredEvents.map(e => ({
+              ...e,
+              rawDate: e.rawDate,
+            }))}
+            onRegister={handleRegister}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
