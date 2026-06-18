@@ -1491,7 +1491,7 @@ const CTASection: React.FC = () => (
         Ready to Build the <span className="text-white/80">Future?</span>
       </h2>
       <p className="text-white/80 text-lg mb-10 max-w-2xl mx-auto">
-        Start your journey into blockchain and Web3 mastery with structured,
+        Africa&rsquo;s Premiere Blockchain &amp; Cryptocurrency Social Enterprise. Start your journey into blockchain and Web3 mastery with structured,
         accessible education designed for Africa.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">

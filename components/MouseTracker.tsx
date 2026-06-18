@@ -67,7 +67,7 @@ const MouseTracker: React.FC = () => {
         const progress = Math.min(elapsed / LIFETIME_MS, 1);
         const eased = 1 - progress * progress; // ease-out quad
         el.style.transform = `translate(${driftX * progress}px, ${driftY * progress}px) scale(${0.3 + 0.7 * eased})`;
-        el.style.opacity = String(eased);
+        el.style.opacity = String(eased * 0.35);
         if (progress < 1) {
           requestAnimationFrame(animate);
         } else {
