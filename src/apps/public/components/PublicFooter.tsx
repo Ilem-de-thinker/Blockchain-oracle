@@ -4,11 +4,18 @@ import LogoText from '@/components/LogoText';
 
 const PublicFooter: React.FC = () => (
   <footer className="bg-gray-900 border-t border-gray-800 py-16">
+    <style>{`
+      @media (min-width: 768px) and (max-width: 923px) {
+        .footer-logo-text > span:last-child {
+          font-size: 0.875rem !important;
+        }
+      }
+    `}</style>
     <div className="max-w-7xl mx-auto px-6">
       <div className="grid md:grid-cols-4 gap-12 mb-12">
         <div className="space-y-4">
           <Link to="/" className="flex items-center gap-2">
-            <LogoText variant="footer" size="md" showIcon={true} />
+            <LogoText variant="footer" size="md" showIcon={true} className="footer-logo-text" />
           </Link>
           <p className="text-sm text-white/60 leading-relaxed">
             Africa's Premiere Blockchain and Cryptocurrency Adoption Hub.
