@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Parallax } from "swiper/modules";
 import { authApi, mapBackendRoleToFrontend } from "@/src/api/auth";
 import { coursesApi, Course } from "@/src/api/courses";
-import eventsApi, { Event as ApiEvent } from "@/src/api/events";
+
 import testimonialsApi, { Testimonial } from "@/src/api/testimonials";
 import { UserRole, User } from "@/types";
 import GoogleSignInModal from "@/components/GoogleSignInModal";
@@ -15,43 +15,8 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/parallax";
 
-const CountdownTimer: React.FC<{ targetDate: string }> = ({ targetDate }) => {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const diff = new Date(targetDate).getTime() - Date.now();
-      if (diff > 0) {
-        setTimeLeft({
-          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((diff / (1000 * 60)) % 60),
-        });
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [targetDate]);
 
-  return (
-    <div className="flex gap-2">
-      {[
-        { val: timeLeft.days, label: "d" },
-        { val: timeLeft.hours, label: "h" },
-        { val: timeLeft.minutes, label: "m" },
-      ].map((item, i) => (
-        <div
-          key={i}
-          className="bg-purple-600/10 backdrop-blur rounded-lg px-2 py-1 text-center min-w-[40px]"
-        >
-          <div className="text-sm font-bold text-purple-700">{item.val}</div>
-          <div className="text-[8px] text-purple-500 uppercase">
-            {item.label}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -783,8 +748,11 @@ const CoursesPreview: React.FC = () => {
   }, []);
 
   return (
-    <section id="courses" className="py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="courses" className="py-32 bg-white relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] bg-purple-500/10 rounded-full blur-3xl" />
+      </div>
+      <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -792,10 +760,10 @@ const CoursesPreview: React.FC = () => {
           className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"
         >
           <div>
-            <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
-              Courses
+            <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100/70 border border-purple-200/50 text-purple-700 text-xs font-bold tracking-[0.15em] uppercase mb-4 backdrop-blur-sm">
+              COURSES
             </span>
-            <h2 className="text-4xl md:text-5xl font-black text-gray-900">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
               Featured{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
                 Courses
@@ -804,7 +772,7 @@ const CoursesPreview: React.FC = () => {
           </div>
           <Link
             to="/courses"
-            className="text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2 text-sm group"
+            className="text-purple-600 hover:text-purple-700 font-semibold flex items-center gap-2 text-sm group"
           >
             View All Courses{" "}
             <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
@@ -812,77 +780,98 @@ const CoursesPreview: React.FC = () => {
         </motion.div>
 
         {coursesLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             {[1, 2, 3, 4].map((s) => (
               <div
                 key={s}
-                className="animate-pulse bg-white border border-gray-100 rounded-2xl overflow-hidden"
+                className="animate-pulse bg-white border border-slate-100 rounded-2xl overflow-hidden"
               >
-                <div className="h-44 bg-gray-100" />
+                <div className="h-48 bg-slate-200" />
                 <div className="p-5 space-y-3">
-                  <div className="h-4 bg-gray-100 rounded w-3/4" />
-                  <div className="h-3 bg-gray-100 rounded w-1/2" />
+                  <div className="h-4 bg-slate-200 rounded w-3/4" />
+                  <div className="h-3 bg-slate-200 rounded w-1/2" />
                   <div className="flex justify-between pt-2">
-                    <div className="h-5 bg-gray-100 rounded w-16" />
-                    <div className="w-10 h-10 bg-gray-100 rounded-xl" />
+                    <div className="h-5 bg-slate-200 rounded w-16" />
+                    <div className="w-9 h-9 bg-slate-200 rounded-full" />
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             {featuredCourses.slice(0, 4).map((c, i) => (
-              <Link key={c.id} to={`/courses/${c.id}`}>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  whileHover={{ y: -4 }}
-                  className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-purple-200 transition-all hover:shadow-lg"
-                >
-                  <div className="relative h-44 overflow-hidden">
-                    {c.thumbnail_url ? (
-                      <img
-                        src={c.thumbnail_url}
-                        alt={c.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center">
-                        <span className="text-white/20 text-6xl font-black">
+              <motion.div
+                key={c.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Link to={`/courses/${c.id}`} className="block group">
+                  <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden transition-all duration-300 group-hover:border-purple-200 group-hover:shadow-lg group-hover:shadow-purple-100/50">
+                    <div className="relative h-48 bg-slate-900 overflow-hidden">
+                      <div className="absolute inset-0 opacity-60" style={{
+                        background: `
+                          radial-gradient(ellipse 120% 80% at 20% 30%, rgba(139,92,246,0.35) 0%, transparent 60%),
+                          radial-gradient(ellipse 100% 60% at 80% 40%, rgba(167,139,250,0.25) 0%, transparent 60%),
+                          radial-gradient(ellipse 80% 80% at 50% 70%, rgba(124,58,237,0.2) 0%, transparent 60%)
+                        `
+                      }} />
+                      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 200" preserveAspectRatio="none" fill="none">
+                        <path d="M0 140 Q 80 100, 160 140 T 320 140 T 480 140" stroke="url(#meshGrad)" strokeWidth="1.2" opacity="0.4" />
+                        <path d="M0 90 Q 80 50, 160 90 T 320 90 T 480 90" stroke="url(#meshGrad)" strokeWidth="0.8" opacity="0.3" />
+                        <path d="M0 170 Q 80 150, 160 170 T 320 170 T 480 170" stroke="url(#meshGrad)" strokeWidth="0.6" opacity="0.2" />
+                        <path d="M0 60 Q 80 30, 160 60 T 320 60 T 480 60" stroke="url(#meshGrad)" strokeWidth="0.5" opacity="0.15" />
+                        <line x1="60" y1="0" x2="60" y2="200" stroke="rgba(167,139,250,0.06)" strokeWidth="0.5" />
+                        <line x1="150" y1="0" x2="150" y2="200" stroke="rgba(167,139,250,0.04)" strokeWidth="0.5" />
+                        <line x1="250" y1="0" x2="250" y2="200" stroke="rgba(167,139,250,0.06)" strokeWidth="0.5" />
+                        <line x1="340" y1="0" x2="340" y2="200" stroke="rgba(167,139,250,0.04)" strokeWidth="0.5" />
+                        <defs>
+                          <linearGradient id="meshGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="rgba(167,139,250,0)" />
+                            <stop offset="25%" stopColor="rgba(139,92,246,0.5)" />
+                            <stop offset="50%" stopColor="rgba(124,58,237,0.6)" />
+                            <stop offset="75%" stopColor="rgba(139,92,246,0.5)" />
+                            <stop offset="100%" stopColor="rgba(167,139,250,0)" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-white/[0.04] text-7xl font-black select-none tracking-tighter">
                           {c.title.charAt(0)}
                         </span>
                       </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent" />
-                    {c.level && (
-                      <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-purple-600/90 text-white text-[10px] font-bold uppercase tracking-wider">
-                        {c.level}
-                      </span>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors line-clamp-1">
-                      {c.title}
-                    </h3>
-                    <p className="text-xs text-gray-400 line-clamp-2 mb-4">
-                      {c.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xl font-black text-gray-900">
-                        {parseFloat(c.total_amount || "0") === 0
-                          ? "FREE"
-                          : `₦${c.total_amount}`}
-                      </span>
-                      <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all flex items-center justify-center">
-                        <i className="fas fa-arrow-right text-xs"></i>
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
+                      {c.level && (
+                        <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-purple-100/80 backdrop-blur-sm text-purple-800 text-[11px] font-bold uppercase tracking-wider border border-purple-200/40">
+                          {c.level}
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-bold text-slate-900 mb-1.5 group-hover:text-purple-600 transition-colors line-clamp-1 text-base">
+                        {c.title}
+                      </h3>
+                      <p className="text-sm text-slate-400 line-clamp-2 mb-4 leading-relaxed">
+                        {c.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg font-bold text-slate-900">
+                          {parseFloat(c.total_amount || "0") === 0
+                            ? "FREE"
+                            : `₦${c.total_amount}`}
+                        </span>
+                        <div className="w-9 h-9 rounded-full bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:scale-110 transition-all flex items-center justify-center">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              </Link>
+                </Link>
+              </motion.div>
             ))}
           </div>
         )}
@@ -903,7 +892,8 @@ const LearningPaths: React.FC = () => {
         "Use Cases",
       ],
       icon: "fas fa-cube",
-      color: "from-purple-500 to-blue-500",
+      iconBg: "bg-purple-100",
+      iconColor: "text-purple-700",
     },
     {
       title: "Web3 Developer / Builder",
@@ -915,7 +905,8 @@ const LearningPaths: React.FC = () => {
         "Security",
       ],
       icon: "fas fa-code",
-      color: "from-purple-500 to-purple-600",
+      iconBg: "bg-purple-100",
+      iconColor: "text-purple-700",
     },
     {
       title: "Crypto Literacy & Trading",
@@ -927,7 +918,8 @@ const LearningPaths: React.FC = () => {
         "Security Practices",
       ],
       icon: "fas fa-chart-line",
-      color: "from-amber-500 to-orange-500",
+      iconBg: "bg-orange-100",
+      iconColor: "text-orange-600",
     },
   ];
 
@@ -940,10 +932,10 @@ const LearningPaths: React.FC = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
-            Learning Paths
+          <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100/70 border border-purple-200/50 text-purple-700 text-xs font-bold tracking-[0.15em] uppercase mb-4 backdrop-blur-sm">
+            LEARNING PATHS
           </span>
-          <h2 className="text-4xl md:text-5xl font-black text-gray-900">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
             Choose Your{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
               Path
@@ -959,25 +951,23 @@ const LearningPaths: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.15 }}
-              className="group bg-white border border-gray-100 rounded-2xl p-8 hover:border-purple-200 transition-all hover:shadow-lg"
+              className="group bg-white border border-slate-100 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 hover:border-slate-200"
             >
               <div
-                className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${p.color} flex items-center justify-center text-white text-xl mb-6`}
+                className={`w-14 h-14 rounded-xl ${p.iconBg} ${p.iconColor} flex items-center justify-center text-xl mb-6`}
               >
                 <i className={p.icon}></i>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-6">
+              <h3 className="text-xl font-bold text-slate-900 mb-6">
                 {p.title}
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {p.steps.map((step, j) => (
-                  <div key={j} className="flex items-center gap-3">
-                    <div
-                      className={`w-7 h-7 rounded-full bg-gradient-to-br ${p.color} flex items-center justify-center text-white text-xs font-bold shrink-0`}
-                    >
-                      {j + 1}
-                    </div>
-                    <span className="text-gray-600 text-sm font-medium">
+                  <div key={j} className="flex items-start gap-4">
+                    <span className="text-sm font-mono text-slate-300 font-semibold w-6 shrink-0 mt-0.5">
+                      {String(j + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-slate-700 text-sm font-medium leading-relaxed">
                       {step}
                     </span>
                   </div>
@@ -1079,140 +1069,50 @@ const EnterpriseServices: React.FC = () => {
   );
 };
 
-const EventsWebinars: React.FC = () => {
-  const [featuredEvents, setFeaturedEvents] = useState<ApiEvent[]>([]);
-  const [eventsLoading, setEventsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await eventsApi.getEvents(1, 3);
-        setFeaturedEvents(response.results || []);
-      } catch (err) {
-        console.error("Failed to fetch featured events:", err);
-      } finally {
-        setEventsLoading(false);
-      }
-    };
-    fetchEvents();
-  }, []);
-
-  return (
-    <section id="events" className="py-32 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"
-        >
-          <div>
-            <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+const EventsEmptyState: React.FC = () => (
+  <section id="events" className="py-32 bg-gray-50">
+    <div className="max-w-7xl mx-auto px-6">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"
+      >
+        <div>
+          <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100/70 border border-purple-200/50 text-purple-700 text-xs font-bold tracking-[0.15em] uppercase mb-4 backdrop-blur-sm">
+            EVENTS
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+            Upcoming{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
               Events
             </span>
-            <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-              Upcoming{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
-                Events
-              </span>
-            </h2>
-          </div>
-          <Link
-            to="/events"
-            className="text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2 text-sm group"
-          >
-            View All Events{" "}
-            <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-          </Link>
-        </motion.div>
+          </h2>
+        </div>
+      </motion.div>
 
-        {eventsLoading ? (
-          <div className="grid md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((s) => (
-              <div
-                key={s}
-                className="animate-pulse bg-white border border-gray-100 rounded-2xl overflow-hidden"
-              >
-                <div className="h-44 bg-gray-100" />
-                <div className="p-5 space-y-3">
-                  <div className="h-4 bg-gray-100 rounded w-3/4" />
-                  <div className="h-3 bg-gray-100 rounded w-1/2" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-3 gap-6">
-            {featuredEvents.slice(0, 3).map((e, i) => (
-              <Link key={e.id} to={`/events/${e.id}`}>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  whileHover={{ y: -4 }}
-                  className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-purple-200 transition-all hover:shadow-lg"
-                >
-                  <div className="relative h-44 overflow-hidden">
-                    {e.image_url ? (
-                      <img
-                        src={e.image_url}
-                        alt={e.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center">
-                        <i className="fas fa-calendar-alt text-white/20 text-6xl"></i>
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent" />
-                    <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-purple-600/90 text-white text-[10px] font-bold uppercase tracking-wider">
-                      {e.type}
-                    </span>
-                    {parseFloat(e.registration_fee || "0") +
-                      parseFloat(e.event_fee || "0") ===
-                      0 && (
-                      <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-purple-500/90 text-white text-[10px] font-bold uppercase tracking-wider">
-                        Free
-                      </span>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors">
-                      {e.title}
-                    </h3>
-                    <p className="text-xs text-gray-400 line-clamp-2 mb-3">
-                      {e.description}
-                    </p>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-xs text-gray-400">
-                        {new Date(e.date).toLocaleDateString("en-US", {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </span>
-                      <CountdownTimer targetDate={e.date} />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400 flex items-center gap-1">
-                        <i className="fas fa-users text-[10px]"></i>
-                        {e.registrations_count} attending
-                      </span>
-                      <div className="px-4 py-1.5 rounded-lg text-xs font-bold bg-purple-100 text-purple-700 group-hover:bg-purple-600 group-hover:text-white transition-all">
-                        Register
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
-  );
-};
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="border-2 border-dashed border-slate-200 rounded-2xl py-20 px-6 flex flex-col items-center justify-center"
+      >
+        <svg className="w-20 h-20 text-slate-300 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          <circle cx="12" cy="16" r="1" fill="currentColor" />
+          <circle cx="16" cy="16" r="1" fill="currentColor" />
+          <circle cx="8" cy="16" r="1" fill="currentColor" />
+        </svg>
+        <div className="relative">
+          <div className="absolute -top-1 -right-2 w-2.5 h-2.5 rounded-full bg-purple-400" />
+        </div>
+        <p className="text-slate-400 text-sm font-medium">
+          Exciting updates dropping soon. Stay tuned!
+        </p>
+      </motion.div>
+    </div>
+  </section>
+);
 
 const TestimonialCard: React.FC<{
   testimonial: Testimonial;
@@ -1401,26 +1301,26 @@ const BlogPreview: React.FC = () => {
       category: "Technology",
       date: "Mar 28, 2026",
       image:
-        "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?w=400&h=250&fit=crop",
+        "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?w=600&h=338&fit=crop",
     },
     {
       title: "The Future of DeFi in Emerging Markets",
       category: "Finance",
       date: "Mar 25, 2026",
       image:
-        "https://images.unsplash.com/photo-1622630998477-20aa696ecb05?w=400&h=250&fit=crop",
+        "https://images.unsplash.com/photo-1622630998477-20aa696ecb05?w=600&h=338&fit=crop",
     },
     {
       title: "NFTs Beyond Art: Real-World Applications",
       category: "Innovation",
       date: "Mar 22, 2026",
       image:
-        "https://images.unsplash.com/photo-1639322537228-f710d846310a?w=400&h=250&fit=crop",
+        "https://images.unsplash.com/photo-1639322537228-f710d846310a?w=600&h=338&fit=crop",
     },
   ];
 
   return (
-    <section className="py-32 bg-gray-50">
+    <section className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1428,10 +1328,10 @@ const BlogPreview: React.FC = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
-            Blog
+          <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100/70 border border-purple-200/50 text-purple-700 text-xs font-bold tracking-[0.15em] uppercase mb-4 backdrop-blur-sm">
+            BLOG
           </span>
-          <h2 className="text-4xl md:text-5xl font-black text-gray-900">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
             Latest{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
               Insights
@@ -1448,24 +1348,23 @@ const BlogPreview: React.FC = () => {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
               whileHover={{ y: -4 }}
-              className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-purple-200 transition-all hover:shadow-lg"
+              className="group bg-white border border-slate-100 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-slate-200"
             >
-              <div className="relative h-44 overflow-hidden">
+              <div className="relative aspect-video overflow-hidden">
                 <img
                   src={p.image}
                   alt={p.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent" />
               </div>
-              <div className="p-5">
-                <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">
+              <div className="p-6">
+                <span className="inline-block text-xs font-bold text-violet-600 uppercase tracking-[0.12em] mb-2.5">
                   {p.category}
                 </span>
-                <h3 className="font-bold text-gray-900 mt-2 mb-2 group-hover:text-purple-600 transition-colors line-clamp-2">
+                <h3 className="font-bold text-slate-900 leading-snug group-hover:text-violet-600 transition-colors line-clamp-2 mb-3">
                   {p.title}
                 </h3>
-                <p className="text-xs text-gray-400">{p.date}</p>
+                <p className="text-sm text-slate-400">{p.date}</p>
               </div>
             </motion.div>
           ))}
@@ -1568,9 +1467,15 @@ const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({
       <CoursesPreview />
       <LearningPaths />
       <EnterpriseServices />
-      <EventsWebinars />
+      <EventsEmptyState />
       <TestimonialsSection />
       <BlogPreview />
+      <div className="relative -mb-1">
+        <svg className="w-full h-16 md:h-24 text-gray-50" viewBox="0 0 1200 60" preserveAspectRatio="none" fill="currentColor">
+          <path d="M0 60 Q 150 0 300 30 Q 450 60 600 30 Q 750 0 900 30 Q 1050 60 1200 30 L1200 60 L0 60 Z" />
+          <path d="M0 60 Q 150 20 300 40 Q 450 60 600 35 Q 750 10 900 40 Q 1050 60 1200 35 L1200 60 L0 60 Z" opacity="0.5" />
+        </svg>
+      </div>
       <CTASection />
       <GoogleSignInModal
         open={showSignInModal}
