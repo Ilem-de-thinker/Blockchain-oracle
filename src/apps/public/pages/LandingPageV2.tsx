@@ -634,36 +634,42 @@ const PlatformFeatures: React.FC = () => {
       title: "Structured Learning",
       desc: "Begin your blockchain journey with clear curriculum pathways from foundational blockchain concepts to intermediate Web3 mastery.",
       color: "from-purple-500 to-pink-500",
+      bento: true,
     },
     {
       icon: "fas fa-code",
       title: "Real-World Practice",
       desc: "Engage in Events, webinars, and consulting services that bridge theory to implementation.",
       color: "from-blue-500 to-cyan-500",
+      bento: false,
     },
     {
       icon: "fas fa-chart-line",
       title: "Progress Tracking",
       desc: "Monitor your Journey with module completion tracking, visual progress indicators, and estimated learning timeline",
       color: "from-purple-500 to-purple-600",
+      bento: false,
     },
     {
       icon: "fas fa-shield-alt",
       title: "Certified Programs",
       desc: "Showcase your achievements with downloadable certificates backed by unique verification codes upon successful course completion.",
       color: "from-amber-500 to-orange-500",
+      bento: false,
     },
     {
       icon: "fas fa-users",
       title: "Community Hub",
       desc: "Industry-relevant courses and case studies aligned with African economic system and technological environment.",
       color: "from-rose-500 to-red-500",
+      bento: false,
     },
     {
       icon: "fas fa-globe",
       title: "African-Focused Content",
       desc: "Curricula and case studies tailored to African markets, regulations, and infrastructure realities.",
       color: "from-indigo-500 to-purple-500",
+      bento: true,
     },
   ];
 
@@ -679,14 +685,14 @@ const PlatformFeatures: React.FC = () => {
           <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
             Features
           </span>
-          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">
             Powerful{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
               Platform
             </span>{" "}
             Features
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">
+          <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
             Structured blockchain education and enterprise services designed for
             African learners and organizations.
           </p>
@@ -701,17 +707,28 @@ const PlatformFeatures: React.FC = () => {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
               whileHover={{ y: -8 }}
-              className="group bg-white border border-gray-100 rounded-2xl p-8 hover:border-purple-200 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/5"
+              className="group relative"
             >
-              <div
-                className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center text-white text-xl mb-6 group-hover:scale-110 transition-transform`}
-              >
-                <i className={f.icon}></i>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-3">
-                {f.title}
-              </h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+              {f.bento ? (
+                <>
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500" />
+                  <div className="relative bg-white border border-transparent rounded-2xl p-8 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10">
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center text-white text-xl mb-6 group-hover:scale-110 transition-transform`}>
+                      <i className={f.icon}></i>
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-3">{f.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+                  </div>
+                </>
+              ) : (
+                <div className="bg-white border border-gray-100 rounded-2xl p-8 hover:border-purple-200 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/5">
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center text-white text-xl mb-6 group-hover:scale-110 transition-transform`}>
+                    <i className={f.icon}></i>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">{f.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
@@ -1011,58 +1028,61 @@ const EnterpriseServices: React.FC = () => {
   ];
 
   return (
-    <section
-      id="enterprise"
-      className="py-32 bg-white relative overflow-hidden"
-    >
+    <section id="enterprise" className="py-32 bg-white relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-transparent to-purple-50/50" />
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
-            Enterprise
-          </span>
-          <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-            Enterprise{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
-              Services
-            </span>
-          </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto mt-4">
-            From web3 webiners and blockchain events to coperate training and
-            consulting, we support african enterprices in adopting emerging
-            technologies
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {services.map((s, i) => (
+        <div className="grid md:grid-cols-5 gap-12 lg:gap-16">
+          <div className="md:col-span-2 md:sticky md:top-32 md:self-start">
             <motion.div
-              key={i}
-              initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ scale: 1.02 }}
-              className={`group bg-white border border-gray-100 rounded-2xl p-8 hover:border-purple-200 transition-all flex items-start gap-5 hover:shadow-lg ${i === services.length - 1 ? "md:col-span-2 md:max-w-xl md:mx-auto md:w-full" : ""}`}
             >
-              <div className="w-14 h-14 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-600 text-xl shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-all">
-                <i className={s.icon}></i>
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  {s.title}
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed">
-                  {s.desc}
-                </p>
-              </div>
+              <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+                Enterprise
+              </span>
+              <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">
+                Enterprise{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
+                  Services
+                </span>
+              </h2>
+              <p className="text-gray-500 mt-4 leading-relaxed">
+                From web3 webinars and blockchain events to corporate training
+                and consulting, we support African enterprises in adopting
+                emerging technologies.
+              </p>
             </motion.div>
-          ))}
+          </div>
+
+          <div className="md:col-span-3 grid gap-5">
+            {services.map((s, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ x: 4 }}
+                className="group relative"
+              >
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl blur opacity-0 group-hover:opacity-15 transition duration-500" />
+                <div className="relative bg-white border border-gray-100 rounded-2xl p-6 hover:border-transparent transition-all duration-300 flex items-start gap-5 hover:shadow-lg">
+                  <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
+                    <i className={s.icon}></i>
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">
+                      {s.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">
+                      {s.desc}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
