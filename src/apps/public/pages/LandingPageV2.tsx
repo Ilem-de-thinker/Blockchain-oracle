@@ -637,7 +637,6 @@ const TrustedBy: React.FC = () => (
 
 const AboutPreview: React.FC = () => (
   <section id="about" className="py-20 lg:py-24 relative overflow-hidden">
-    <HexPatternBg />
     <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
       <Reveal>
@@ -882,10 +881,10 @@ const CoursesPreview: React.FC = () => {
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredCourses.slice(0, 4).map((c, i) => (
-            <Link key={c.id} to={`/courses/${c.id}`}>
-              <Reveal delay={i * 0.08}>
-                <div className="group bg-white rounded-2xl overflow-hidden border border-purple-100/50 shadow-sm hover:shadow-xl transition-all">
-                  <div className="relative h-44 overflow-hidden">
+            <Link key={c.id} to={`/courses/${c.id}`} className="h-full">
+              <Reveal delay={i * 0.08} className="h-full">
+                <div className="group bg-white rounded-2xl overflow-hidden border border-purple-100/50 shadow-sm hover:shadow-xl transition-all h-full flex flex-col">
+                  <div className="relative h-44 overflow-hidden shrink-0">
                     {c.thumbnail_url ? (
                       <img
                         src={c.thumbnail_url}
@@ -906,20 +905,21 @@ const CoursesPreview: React.FC = () => {
                       </span>
                     )}
                   </div>
-                  <div className="p-6">
+                  <div className="p-6 flex flex-col flex-1">
                     <h3 className="font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors line-clamp-1">
                       {c.title}
                     </h3>
                     <p className="text-xs text-gray-400 line-clamp-2 mb-4">
                       {c.description}
                     </p>
+                    <div className="flex-1" />
                     <div className="flex items-center justify-between">
                       <span className="text-xl font-black text-gray-900">
                         {parseFloat(c.total_amount || "0") === 0
                           ? "FREE"
                           : `₦${c.total_amount}`}
                       </span>
-                      <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all flex items-center justify-center shrink-0">
                         <ArrowRight size={14} />
                       </div>
                     </div>
@@ -938,26 +938,26 @@ const CoursesPreview: React.FC = () => {
 const LearningPaths: React.FC = () => {
   const paths = [
     {
-      title: "Blockchain Foundations",
+      title: "Foundations & Infrastructure",
       steps: [
-        "Blockchain Basics",
+        "Protocol Basics",
         "Cryptography",
-        "Consensus Mechanisms",
+        "Governance Models",
         "Network Architecture",
         "Use Cases",
       ],
       icon: Layers,
     },
     {
-      title: "Web3 Developer / Builder",
+      title: "Learning & Education",
       steps: [
-        "Web3 Basics",
-        "Smart Contracts",
-        "DApp Development",
-        "DeFi Protocols",
-        "Security",
+        "Learning Methodologies",
+        "Content Creation",
+        "Curriculum Design",
+        "Assessment & Feedback",
+        "Community Building",
       ],
-      icon: Code2,
+      icon: BookOpen,
     },
     {
       title: "Crypto Literacy & Trading",
@@ -990,7 +990,7 @@ const LearningPaths: React.FC = () => {
         <div className="grid md:grid-cols-3 gap-8">
           {paths.map((p, i) => (
             <Reveal key={i} delay={i * 0.12}>
-              <div className="group bg-white border border-purple-100/50 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl hover:border-purple-200/50">
+              <div className="group bg-white rounded-2xl p-8 transition-all duration-300 hover:shadow-xl relative border border-purple-200/60 shadow-sm before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-purple-600 before:via-purple-400 before:to-indigo-400 before:rounded-t-2xl">
                 <div className="w-14 h-14 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 text-xl mb-6 group-hover:bg-purple-600 group-hover:text-white transition-all">
                   <p.icon size={26} />
                 </div>
@@ -1075,7 +1075,6 @@ const EventsPreview: React.FC = () => {
 
   return (
     <section id="events" className="py-20 lg:py-24 bg-[#FAF8FF] relative overflow-hidden">
-      <HexPatternBg />
       <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
         <Reveal className="text-center mb-12">
           <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
@@ -1429,7 +1428,6 @@ const BlogPreview: React.FC = () => {
 
   return (
     <section className="py-20 lg:py-24 bg-[#FAF8FF] relative overflow-hidden">
-      <HexPatternBg />
       <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
         <Reveal className="text-center mb-16">
           <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
