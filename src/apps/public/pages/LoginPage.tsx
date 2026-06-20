@@ -249,6 +249,15 @@ const LoginPage: React.FC<{ onLogin: (user: User) => void }> = ({ onLogin }) => 
                 <img src="/Logo/logo.png" alt="BlockchainOracle Logo" className="w-12 h-12 object-contain mx-auto mb-3" />
               </div>
 
+              <Link
+                to="/"
+                className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-purple-600 transition-colors mb-4"
+              >
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Home
+              </Link>
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Welcome Back</h2>
                 <p className="text-gray-500 mt-1 text-sm">Sign in to your professional workspace</p>

@@ -47,6 +47,7 @@ import "swiper/css/parallax";
 import testimonialsApi, { Testimonial } from "@/src/api/testimonials";
 import { UserRole, User } from "@/types";
 import GoogleSignInModal from "@/components/GoogleSignInModal";
+import TelegramJoinBanner from "@/components/TelegramJoinBanner";
 import LogoText from "@/components/LogoText";
 
 const HexPatternBg: React.FC = () => (
@@ -182,8 +183,22 @@ const ProgressBar: React.FC = () => {
 const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const isAuthenticated = authApi.isAuthenticated();
   const navigate = useNavigate();
+
+  const user = authApi.getStoredUser();
+  const isAuthenticated = authApi.isAuthenticated();
+
+  const dashboardPath = (() => {
+    if (!user) return "/dashboard";
+    switch (user.role) {
+      case UserRole.SUPER_ADMIN: return "/super-admin";
+      case UserRole.ADMIN: return "/admin";
+      case UserRole.INSTRUCTOR: return "/tutor";
+      case UserRole.INFLUENCER: return "/influencer";
+      case UserRole.CONTRIBUTOR: return "/contributor";
+      default: return "/dashboard";
+    }
+  })();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -238,18 +253,41 @@ const Navbar: React.FC = () => {
       </div>
 
       <div className="hidden md:flex items-center gap-3">
-        <button
-          onClick={() => navigate("/login")}
-          className="px-5 py-2 border-2 border-purple-600 text-purple-600 text-sm font-bold rounded-full hover:bg-purple-50 transition-all"
-        >
-          Sign In
-        </button>
-        <button
-          onClick={() => navigate("/register")}
-          className="px-5 py-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-bold rounded-full shadow-lg hover:shadow-purple-200 hover:-translate-y-0.5 transition-all"
-        >
-          Get Started
-        </button>
+        {isAuthenticated ? (
+          <>
+            <Link
+              to={dashboardPath}
+              className="px-5 py-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-bold rounded-full shadow-lg hover:shadow-purple-200 hover:-translate-y-0.5 transition-all"
+            >
+              Dashboard
+            </Link>
+            <Link
+              to={`${dashboardPath}/profile`}
+              className="flex items-center gap-2 group"
+            >
+              <img
+                src={user?.avatar || `https://i.pravatar.cc/100?u=${user?.email}`}
+                alt={user?.name}
+                className="w-9 h-9 rounded-full border-2 border-purple-600"
+              />
+            </Link>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={() => navigate("/login")}
+              className="px-5 py-2 border-2 border-purple-600 text-purple-600 text-sm font-bold rounded-full hover:bg-purple-50 transition-all"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => navigate("/register")}
+              className="px-5 py-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-bold rounded-full shadow-lg hover:shadow-purple-200 hover:-translate-y-0.5 transition-all"
+            >
+              Get Started
+            </button>
+          </>
+        )}
       </div>
 
       <button
@@ -272,18 +310,38 @@ const Navbar: React.FC = () => {
               </button>
             ))}
             <hr className="border-purple-100" />
-            <button
-              onClick={() => { setMobileOpen(false); navigate("/login"); }}
-              className="px-5 py-2.5 border-2 border-purple-600 text-purple-600 text-sm font-bold rounded-full text-center"
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => { setMobileOpen(false); navigate("/register"); }}
-              className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-bold rounded-full text-center"
-            >
-              Get Started
-            </button>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  to={dashboardPath}
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white text-center"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={async () => { setMobileOpen(false); await authApi.logout(); window.location.href = "/login"; }}
+                  className="w-full py-2.5 rounded-xl text-sm font-bold text-red-500 border border-red-200 hover:bg-red-50 transition-all"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => { setMobileOpen(false); navigate("/login"); }}
+                  className="px-5 py-2.5 border-2 border-purple-600 text-purple-600 text-sm font-bold rounded-full text-center"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => { setMobileOpen(false); navigate("/register"); }}
+                  className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-bold rounded-full text-center"
+                >
+                  Get Started
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -1462,6 +1520,8 @@ const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({
       }
       const timer = setTimeout(() => {
         setShowSignInModal(true);
+        // Track immediately when shown to guarantee 24 hour appearance limit
+        localStorage.setItem("signin_dismissed_at", Date.now().toString());
       }, 5000);
       return () => clearTimeout(timer);
     }
@@ -1475,6 +1535,14 @@ const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({
   const handleDismiss = () => {
     localStorage.setItem("signin_dismissed_at", Date.now().toString());
     setShowSignInModal(false);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      handleDismiss();
+    } else {
+      setShowSignInModal(open);
+    }
   };
 
   return (
@@ -1493,10 +1561,11 @@ const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({
       <CTASection />
       <GoogleSignInModal
         open={showSignInModal}
-        onOpenChange={setShowSignInModal}
+        onOpenChange={handleOpenChange}
         onLogin={handleLogin}
         onDismiss={handleDismiss}
       />
+      <TelegramJoinBanner />
     </div>
   );
 };

@@ -71,6 +71,15 @@ const ForgotPasswordPage: React.FC = () => {
                 <img src="/Logo/logo.png" alt="BlockchainOracle Logo" className="w-12 h-12 object-contain mx-auto mb-3" />
               </div>
 
+              <Link
+                to="/"
+                className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-purple-600 transition-colors mb-4 w-fit"
+              >
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Home
+              </Link>
               <div className="text-center mb-6">
                 <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-3">
                   <i className="fas fa-key text-purple-600"></i>
