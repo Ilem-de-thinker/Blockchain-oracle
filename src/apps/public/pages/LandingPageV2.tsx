@@ -949,7 +949,7 @@ const LearningPaths: React.FC = () => {
       icon: Layers,
     },
     {
-      title: "Learning & Education",
+      title: "Web3 Mastery Course",
       steps: [
         "Learning Methodologies",
         "Content Creation",
@@ -990,7 +990,7 @@ const LearningPaths: React.FC = () => {
         <div className="grid md:grid-cols-3 gap-8">
           {paths.map((p, i) => (
             <Reveal key={i} delay={i * 0.12}>
-              <div className="group bg-white rounded-2xl p-8 transition-all duration-300 hover:shadow-xl relative border border-purple-200/60 shadow-sm before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-purple-600 before:via-purple-400 before:to-indigo-400 before:rounded-t-2xl">
+              <div className="group bg-white rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1.5 relative border border-purple-200/60 shadow-xl shadow-purple-300/40">
                 <div className="w-14 h-14 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 text-xl mb-6 group-hover:bg-purple-600 group-hover:text-white transition-all">
                   <p.icon size={26} />
                 </div>
