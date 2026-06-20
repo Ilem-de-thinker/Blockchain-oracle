@@ -15,6 +15,7 @@ import {
   Users,
   Globe,
   Calendar,
+  MapPin,
   ChevronRight,
   ExternalLink,
   BookOpen,
@@ -37,6 +38,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Parallax } from "swiper/modules";
 import { authApi, mapBackendRoleToFrontend } from "@/src/api/auth";
 import { coursesApi, Course } from "@/src/api/courses";
+import eventsApi from "@/src/api/events";
 
 import "swiper/css";
 import "swiper/css/effect-fade";
@@ -46,6 +48,65 @@ import testimonialsApi, { Testimonial } from "@/src/api/testimonials";
 import { UserRole, User } from "@/types";
 import GoogleSignInModal from "@/components/GoogleSignInModal";
 import LogoText from "@/components/LogoText";
+
+const HexPatternBg: React.FC = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none select-none" aria-hidden>
+    <svg
+      className="w-full h-full opacity-[0.07]"
+      viewBox="0 0 400 400"
+      preserveAspectRatio="xMidYMid slice"
+      style={{ animation: "driftUp 35s linear infinite" }}
+    >
+      <defs>
+        <pattern id="hex-purple" patternUnits="userSpaceOnUse" width="86.6" height="100" patternTransform="scale(0.8)">
+          <path
+            d="M43.3 0 L86.6 25 L86.6 75 L43.3 100 L0 75 L0 25 Z"
+            fill="none"
+            stroke="#7C3AED"
+            strokeWidth="3"
+          />
+          <path
+            d="M43.3 100 L86.6 125 L86.6 175 L43.3 200 L0 175 L0 125 Z"
+            fill="none"
+            stroke="#7C3AED"
+            strokeWidth="3"
+          />
+          <path
+            d="M0 25 L43.3 50 L43.3 100 L0 125 Z"
+            fill="none"
+            stroke="#7C3AED"
+            strokeWidth="2"
+          />
+          <path
+            d="M86.6 25 L43.3 50 L43.3 0 Z"
+            fill="none"
+            stroke="#7C3AED"
+            strokeWidth="2"
+          />
+          <path
+            d="M86.6 75 L43.3 50 L43.3 100 Z"
+            fill="none"
+            stroke="#7C3AED"
+            strokeWidth="2"
+          />
+          <path
+            d="M86.6 175 L43.3 150 L43.3 200 Z"
+            fill="none"
+            stroke="#7C3AED"
+            strokeWidth="2"
+          />
+        </pattern>
+      </defs>
+      <rect width="100%" height="200%" fill="url(#hex-purple)" />
+    </svg>
+    <style>{`
+      @keyframes driftUp {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-50%); }
+      }
+    `}</style>
+  </div>
+);
 
 const testimonialsData = [
   {
@@ -557,7 +618,9 @@ const TrustedBy: React.FC = () => (
 );
 
 const AboutPreview: React.FC = () => (
-  <section id="about" className="py-20 lg:py-24 max-w-7xl mx-auto px-6 lg:px-10">
+  <section id="about" className="py-20 lg:py-24 relative overflow-hidden">
+    <HexPatternBg />
+    <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
       <Reveal>
         <div className="relative group">
@@ -620,6 +683,7 @@ const AboutPreview: React.FC = () => (
         </Link>
       </Reveal>
     </div>
+    </div>
   </section>
 );
 
@@ -630,42 +694,36 @@ const PlatformFeatures: React.FC = () => {
       icon: BookOpen,
       title: "Structured Learning",
       desc: "Begin your blockchain journey with clear curriculum pathways from foundational blockchain concepts to intermediate Web3 mastery.",
-      tall: true,
     },
     {
       image: "/images/features/practice.jpg",
       icon: Terminal,
       title: "Real-World Practice",
       desc: "Engage in Events, webinars, and consulting services that bridge theory to implementation.",
-      tall: false,
     },
     {
       image: "/images/features/progress.jpg",
       icon: LineChart,
       title: "Progress Tracking",
       desc: "Monitor your Journey with module completion tracking, visual progress indicators, and estimated learning timeline",
-      tall: false,
     },
     {
       image: "/images/features/certified.jpg",
       icon: ShieldCheck,
       title: "Certified Programs",
       desc: "Showcase your achievements with downloadable certificates backed by unique verification codes upon successful course completion.",
-      tall: true,
     },
     {
       image: "/images/features/community.jpg",
       icon: Users,
       title: "Community Hub",
       desc: "Industry-relevant courses and case studies aligned with African economic system and technological environment.",
-      tall: false,
     },
     {
       image: "/images/features/africa.jpg",
       icon: Globe,
       title: "African-Focused Content",
       desc: "Curricula and case studies tailored to African markets, regulations, and infrastructure realities.",
-      tall: true,
     },
   ];
 
@@ -693,18 +751,18 @@ const PlatformFeatures: React.FC = () => {
           </p>
         </Reveal>
 
-        <div className="md:columns-2 lg:columns-3 gap-5 space-y-5">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {features.map((f, i) => (
             <Reveal key={i} delay={i * 0.08}>
               <div
-                className={`break-inside-avoid group relative overflow-hidden rounded-2xl cursor-pointer max-md:min-h-[240px] ${f.tall ? "min-h-[340px]" : "min-h-[200px]"}`}
+                className="group relative overflow-hidden rounded-2xl cursor-pointer h-full min-h-[280px]"
               >
                 <img
                   src={f.image}
                   alt={f.title}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/65 to-black/10" />
                 <div className="relative h-full flex flex-col justify-end p-6 lg:p-8">
                   <div className="w-11 h-11 bg-white/15 backdrop-blur-md rounded-xl flex items-center justify-center mb-4 text-white ring-1 ring-white/20">
                     <f.icon size={22} />
@@ -712,7 +770,7 @@ const PlatformFeatures: React.FC = () => {
                   <h3 className="text-xl font-bold text-white mb-2">
                     {f.title}
                   </h3>
-                  <p className="text-white/70 text-sm leading-relaxed line-clamp-3">
+                  <p className="text-white/90 text-sm leading-relaxed line-clamp-3">
                     {f.desc}
                   </p>
                 </div>
@@ -753,22 +811,22 @@ const CoursesPreview: React.FC = () => {
   }, []);
 
   return (
-    <section id="courses" className="py-20 lg:py-24 max-w-7xl mx-auto px-6 lg:px-10">
-      <Reveal className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-        <div>
-          <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+    <section id="courses" className="py-20 lg:py-24 relative overflow-hidden">
+      <HexPatternBg />
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
+      <Reveal className="text-center mb-12">
+        <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+          Courses
+        </span>
+        <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4">
+          Featured{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
             Courses
           </span>
-          <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900">
-            Featured{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
-              Courses
-            </span>
-          </h2>
-        </div>
+        </h2>
         <Link
           to="/courses"
-          className="text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2 text-sm group"
+          className="inline-flex text-purple-600 hover:text-purple-700 font-bold items-center gap-2 text-sm group"
         >
           View All Courses{" "}
           <ArrowRight
@@ -848,6 +906,7 @@ const CoursesPreview: React.FC = () => {
           ))}
         </div>
       )}
+      </div>
     </section>
   );
 };
@@ -935,40 +994,177 @@ const LearningPaths: React.FC = () => {
   );
 };
 
-const EventsEmptyState: React.FC = () => (
-  <section id="events" className="py-20 lg:py-24 bg-[#FAF8FF]">
-    <div className="max-w-7xl mx-auto px-6 lg:px-10">
-      <Reveal className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-        <div>
+const EventsPreview: React.FC = () => {
+  const [events, setEvents] = useState<import("@/src/api/events").Event[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const [upcoming, past] = await Promise.all([
+          eventsApi.getUpcomingEvents(1, 5),
+          eventsApi.getPastEvents(1, 5),
+        ]);
+        const all = [...(upcoming.results || []), ...(past.results || [])];
+        all.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        setEvents(all);
+      } catch {
+        // silently fail
+      } finally {
+        setEventsLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  const formatEventDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const formatEventTime = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  };
+
+  const getEventTypeColor = (type: string) => {
+    switch (type?.toLowerCase()) {
+      case "webinar": return "bg-blue-500/20 text-blue-600 border-blue-500/30";
+      case "workshop": return "bg-purple-600/20 text-purple-600 border-purple-600/30";
+      case "conference": return "bg-amber-500/20 text-amber-600 border-amber-500/30";
+      case "meetup": return "bg-emerald-500/20 text-emerald-600 border-emerald-500/30";
+      case "bootcamp": return "bg-orange-500/20 text-orange-600 border-orange-500/30";
+      case "seminar": return "bg-rose-500/20 text-rose-600 border-rose-500/30";
+      case "hackathon": return "bg-cyan-500/20 text-cyan-600 border-cyan-500/30";
+      case "panel": return "bg-pink-500/20 text-pink-600 border-pink-500/30";
+      case "networking": return "bg-indigo-500/20 text-indigo-600 border-indigo-500/30";
+      default: return "bg-teal-500/20 text-teal-600 border-teal-500/30";
+    }
+  };
+
+  return (
+    <section id="events" className="py-20 lg:py-24 bg-[#FAF8FF] relative overflow-hidden">
+      <HexPatternBg />
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
+        <Reveal className="text-center mb-12">
           <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
             Events
           </span>
-          <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900">
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4">
             Upcoming{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
               Events
             </span>
           </h2>
-        </div>
-      </Reveal>
+          <Link
+            to="/dashboard/events"
+            className="inline-flex text-purple-600 hover:text-purple-700 font-bold items-center gap-2 text-sm group"
+          >
+            View All Events{" "}
+            <ArrowRight
+              size={14}
+              className="group-hover:translate-x-1 transition-transform"
+            />
+          </Link>
+        </Reveal>
 
-      <Reveal>
-        <div className="border-2 border-dashed border-purple-200 rounded-3xl py-20 px-6 flex flex-col items-center justify-center text-center">
-          <div className="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mb-6">
-            <Calendar size={36} className="text-gray-400" />
+        {eventsLoading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((s) => (
+              <div
+                key={s}
+                className="animate-pulse bg-white border border-purple-100 rounded-2xl overflow-hidden"
+              >
+                <div className="h-44 bg-purple-50" />
+                <div className="p-6 space-y-3">
+                  <div className="h-4 bg-purple-50 rounded w-3/4" />
+                  <div className="h-3 bg-purple-50 rounded w-1/2" />
+                  <div className="h-5 bg-purple-50 rounded w-16" />
+                </div>
+              </div>
+            ))}
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">
-            Exciting updates dropping soon
-          </h3>
-          <p className="text-gray-500 max-w-md">
-            We're finalizing our Q4 roadshow across Lagos, Nairobi, and
-            Johannesburg. Stay tuned!
-          </p>
-        </div>
-      </Reveal>
-    </div>
-  </section>
-);
+        ) : events.length === 0 ? (
+          <Reveal>
+            <div className="border-2 border-dashed border-purple-200 rounded-3xl py-20 px-6 flex flex-col items-center justify-center text-center">
+              <div className="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mb-6">
+                <Calendar size={36} className="text-gray-400" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                Exciting updates dropping soon
+              </h3>
+              <p className="text-gray-500 max-w-md">
+                We're finalizing our Q4 roadshow across Lagos, Nairobi, and
+                Johannesburg. Stay tuned!
+              </p>
+            </div>
+          </Reveal>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {events.slice(0, 4).map((event, i) => (
+              <Reveal key={event.id} delay={i * 0.08}>
+                <div className="group bg-white rounded-2xl overflow-hidden border border-purple-100/50 shadow-sm hover:shadow-xl transition-all h-full flex flex-col">
+                  <div className="relative h-44 overflow-hidden">
+                    {event.image_url ? (
+                      <img
+                        src={event.image_url}
+                        alt={event.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center">
+                        <Calendar className="text-white/20" size={48} />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent" />
+                    <span
+                      className={`absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getEventTypeColor(event.type)}`}
+                    >
+                      {event.type}
+                    </span>
+                  </div>
+                  <div className="p-5 flex flex-col flex-1">
+                    <h3 className="text-sm font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors">
+                      {event.title}
+                    </h3>
+                    <div className="space-y-1 mb-4 flex-1">
+                      <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                        <Calendar size={12} />
+                        {formatEventDate(event.date)}
+                      </p>
+                      <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                        {event.is_online ? (
+                          <Globe size={12} />
+                        ) : (
+                          <MapPin size={12} />
+                        )}
+                        {event.is_online ? "Online" : event.location || "TBD"}
+                      </p>
+                    </div>
+                    <Link
+                      to={`/dashboard/events/${event.id}`}
+                      className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-colors"
+                    >
+                      <ExternalLink size={12} />
+                      View Details
+                    </Link>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
 
 const TestimonialCard: React.FC<{
   testimonial: Testimonial;
@@ -1208,8 +1404,9 @@ const BlogPreview: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 lg:py-24 bg-[#FAF8FF]">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+    <section className="py-20 lg:py-24 bg-[#FAF8FF] relative overflow-hidden">
+      <HexPatternBg />
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
         <Reveal className="text-center mb-16">
           <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
             Blog
@@ -1222,10 +1419,10 @@ const BlogPreview: React.FC = () => {
           </h2>
         </Reveal>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-8">
           {posts.map((p, i) => (
             <Reveal key={i} delay={i * 0.1}>
-              <div className="group bg-white border border-purple-100/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+              <div className="group bg-white border border-purple-100/60 rounded-2xl overflow-hidden transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1">
                 <div className="relative aspect-video overflow-hidden">
                   <img
                     src={p.image}
@@ -1330,7 +1527,7 @@ const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({
       <PlatformFeatures />
       <CoursesPreview />
       <LearningPaths />
-      <EventsEmptyState />
+      <EventsPreview />
       <TestimonialsSection />
       <BlogPreview />
       <CTASection />

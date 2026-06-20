@@ -15,6 +15,7 @@ interface CalendarEvent {
   location: string;
   is_online: boolean;
   registered: boolean;
+  rawDate?: Date;
 }
 
 interface EventDayPopupProps {
@@ -85,7 +86,7 @@ const EventDayPopup: React.FC<EventDayPopupProps> = ({ date, events, open, onOpe
                   >
                     <ExternalLink className="h-3 w-3" /> Details
                   </Link>
-                  {!event.registered && (
+                  {!event.registered && event.rawDate && event.rawDate >= new Date() && (
                     <Button
                       size="xs"
                       className="ml-auto text-white"

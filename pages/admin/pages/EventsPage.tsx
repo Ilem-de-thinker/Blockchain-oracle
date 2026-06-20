@@ -232,10 +232,16 @@ const AdminEventsPage: React.FC<AdminEventsPageProps> = ({
               className="h-11 rounded-xl border border-border bg-surface px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/50"
             >
               <option value="">All Types</option>
-              <option value="webinar">Webinar</option>
-              <option value="workshop">Workshop</option>
-              <option value="conference">Conference</option>
               <option value="meetup">Meetup</option>
+              <option value="bootcamp">Bootcamp</option>
+              <option value="seminar">Seminar</option>
+              <option value="conference">Conference</option>
+              <option value="workshop">Workshop</option>
+              <option value="hackathon">Hackathon</option>
+              <option value="webinar">Webinar</option>
+              <option value="panel">Panel</option>
+              <option value="networking">Networking</option>
+              <option value="other">Other</option>
             </select>
 
             <select

@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const typeOptions: Array<CreateEventData['type']> = ['webinar', 'workshop', 'conference', 'meetup'];
+const typeOptions: Array<CreateEventData['type']> = ['meetup', 'bootcamp', 'seminar', 'conference', 'workshop', 'hackathon', 'webinar', 'panel', 'networking', 'other'];
 
 const CreateEventPage: React.FC = () => {
   const navigate = useNavigate();

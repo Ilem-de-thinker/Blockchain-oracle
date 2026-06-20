@@ -4,7 +4,7 @@ import eventsApi, { CreateEventData } from '../../../src/api/events';
 import { getErrorMessage } from '../../../src/api/errorHandler';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
-const typeOptions: Array<CreateEventData['type']> = ['webinar', 'workshop', 'conference', 'meetup'];
+const typeOptions: Array<CreateEventData['type']> = ['meetup', 'bootcamp', 'seminar', 'conference', 'workshop', 'hackathon', 'webinar', 'panel', 'networking', 'other'];
 
 const EditEventPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

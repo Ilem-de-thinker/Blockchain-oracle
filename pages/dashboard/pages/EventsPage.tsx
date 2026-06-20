@@ -205,6 +205,12 @@ const EventsPage: React.FC<{ user: User | null }> = ({ user }) => {
       case 'webinar': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'workshop': return 'bg-purple-600/20 text-purple-400 border-purple-600/30';
       case 'conference': return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+      case 'meetup': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+      case 'bootcamp': return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
+      case 'seminar': return 'bg-rose-500/20 text-rose-400 border-rose-500/30';
+      case 'hackathon': return 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30';
+      case 'panel': return 'bg-pink-500/20 text-pink-400 border-pink-500/30';
+      case 'networking': return 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30';
       default: return 'bg-teal-500/20 text-teal-400 border-teal-500/30';
     }
   };
@@ -289,10 +295,10 @@ const EventsPage: React.FC<{ user: User | null }> = ({ user }) => {
 
         <div className={cn(
           "transition-all duration-300 ease-in-out overflow-hidden",
-          showFilters ? "max-h-24 mt-3 opacity-100" : "max-h-0 opacity-0"
+          showFilters ? "max-h-48 mt-3 opacity-100" : "max-h-0 opacity-0"
         )}>
           <div className="flex flex-wrap gap-2">
-            {['all', 'webinar', 'workshop', 'conference'].map((f) => (
+            {['all', 'meetup', 'bootcamp', 'seminar', 'conference', 'workshop', 'hackathon', 'webinar', 'panel', 'networking', 'other'].map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}

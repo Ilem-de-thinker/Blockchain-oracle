@@ -27,6 +27,7 @@ const MyRegistrationsPage: React.FC<{ user: User | null }> = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useLocalStorage('my_registrations_search', '');
   const [filter, setFilter] = useLocalStorage('my_registrations_filter', 'all');
+  const [typeFilter, setTypeFilter] = useLocalStorage('my_registrations_type_filter', 'all');
   const [showFilters, setShowFilters] = useLocalStorage('my_registrations_show_filters', false);
   const [currentPage, setCurrentPage] = useLocalStorage('my_registrations_page', 1);
   const pageSize = 12;
@@ -39,7 +40,7 @@ const MyRegistrationsPage: React.FC<{ user: User | null }> = ({ user }) => {
       const results = data.results;
 
       const needDetails = results.filter(
-        (r) => r.event && !r.event.date
+        (r) => r.event && (!r.event.date || !r.event.type)
       );
       if (needDetails.length > 0) {
         const uniqueIds = [...new Set(needDetails.map((r) => r.event.id))];
@@ -61,6 +62,7 @@ const MyRegistrationsPage: React.FC<{ user: User | null }> = ({ user }) => {
             reg.event.is_online = full.is_online ?? reg.event.is_online;
             reg.event.event_url = full.event_url || reg.event.event_url;
             reg.event.image_url = full.image_url || reg.event.image_url;
+            reg.event.type = full.type || reg.event.type;
           }
         }
       }
@@ -93,9 +95,10 @@ const MyRegistrationsPage: React.FC<{ user: User | null }> = ({ user }) => {
 
   const filteredRegistrations = registrations.filter((r) => {
     const matchesFilter = filter === 'all' || r.status === filter;
+    const matchesType = typeFilter === 'all' || (r.event?.type || '').toLowerCase() === typeFilter;
     const matchesSearch = !searchQuery ||
       (r.event?.title || '').toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
+    return matchesFilter && matchesType && matchesSearch;
   });
 
   const totalItems = filteredRegistrations.length;
@@ -161,25 +164,45 @@ const MyRegistrationsPage: React.FC<{ user: User | null }> = ({ user }) => {
 
         <div className={cn(
           "transition-all duration-300 ease-in-out overflow-hidden",
-          showFilters ? "max-h-24 mt-3 opacity-100" : "max-h-0 opacity-0"
+          showFilters ? "max-h-48 mt-3 opacity-100" : "max-h-0 opacity-0"
         )}>
-          <div className="flex flex-wrap gap-1.5">
-            {['all', 'pending', 'accepted', 'rejected'].map((f) => (
-              <button
-                key={f}
-                onClick={() => handleFilterChange(setFilter, f)}
-                className={cn(
-                  "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all",
-                  filter === f
-                    ? "bg-primary text-white shadow-sm"
-                    : "bg-surface-alt text-text hover:bg-surface-hover"
-                )}
-              >
-                {f}
-              </button>
-            ))}
-            {(filter !== 'all' || searchQuery) && (
-               <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px]" onClick={() => {setFilter('all'); setSearchQuery(''); setCurrentPage(1);}}>
+          <div className="space-y-2">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Status</p>
+            <div className="flex flex-wrap gap-1.5">
+              {['all', 'pending', 'accepted', 'rejected'].map((f) => (
+                <button
+                  key={f}
+                  onClick={() => handleFilterChange(setFilter, f)}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all",
+                    filter === f
+                      ? "bg-primary text-white shadow-sm"
+                      : "bg-surface-alt text-text hover:bg-surface-hover"
+                  )}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted pt-1">Event Type</p>
+            <div className="flex flex-wrap gap-1.5">
+              {['all', 'meetup', 'bootcamp', 'seminar', 'conference', 'workshop', 'hackathon', 'webinar', 'panel', 'networking', 'other'].map((t) => (
+                <button
+                  key={t}
+                  onClick={() => handleFilterChange(setTypeFilter, t)}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all",
+                    typeFilter === t
+                      ? "bg-primary text-white shadow-sm"
+                      : "bg-surface-alt text-text hover:bg-surface-hover"
+                  )}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+            {(filter !== 'all' || typeFilter !== 'all' || searchQuery) && (
+               <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px]" onClick={() => {setFilter('all'); setTypeFilter('all'); setSearchQuery(''); setCurrentPage(1);}}>
                  <X className="h-3 w-3 mr-1" /> Reset
                </Button>
             )}
@@ -196,10 +219,15 @@ const MyRegistrationsPage: React.FC<{ user: User | null }> = ({ user }) => {
               {reg.event?.image_url ? (
                 <div className="relative h-36 bg-gradient-to-br from-primary/10 to-accent/10 overflow-hidden">
                   <img src={reg.event.image_url} alt="" className="w-full h-full object-cover" />
-                  <div className="absolute top-2 left-2">
+                  <div className="absolute top-2 left-2 flex flex-wrap gap-1">
                     <Badge variant={getStatusVariant(reg.status)} className="text-[9px] font-black uppercase px-1.5 py-0.5 shadow-sm">
                       {reg.status}
                     </Badge>
+                    {reg.event?.type && (
+                      <Badge variant="outline" className="text-[9px] font-black uppercase px-1.5 py-0.5 shadow-sm bg-surface/80 text-text">
+                        {reg.event.type}
+                      </Badge>
+                    )}
                   </div>
                   <div className="absolute top-2 right-2">
                     <span className="text-[9px] font-mono text-text-secondary bg-surface/80 backdrop-blur-sm px-1.5 py-0.5 rounded-md">#{reg.id}</span>
@@ -207,9 +235,16 @@ const MyRegistrationsPage: React.FC<{ user: User | null }> = ({ user }) => {
                 </div>
               ) : (
                 <div className="flex items-center justify-between px-4 pt-4 pb-2">
-                  <Badge variant={getStatusVariant(reg.status)} className="text-[9px] font-black uppercase px-1.5 py-0.5 shadow-sm">
-                    {reg.status}
-                  </Badge>
+                  <div className="flex flex-wrap gap-1">
+                    <Badge variant={getStatusVariant(reg.status)} className="text-[9px] font-black uppercase px-1.5 py-0.5 shadow-sm">
+                      {reg.status}
+                    </Badge>
+                    {reg.event?.type && (
+                      <Badge variant="outline" className="text-[9px] font-black uppercase px-1.5 py-0.5 shadow-sm bg-surface-alt text-text">
+                        {reg.event.type}
+                      </Badge>
+                    )}
+                  </div>
                   <div className="flex items-center gap-1.5">
                     <span className="text-[9px] font-mono text-text-secondary">#{reg.id}</span>
                     <Calendar className="h-4 w-4 text-primary/40" />

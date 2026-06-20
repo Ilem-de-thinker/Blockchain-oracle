@@ -27,7 +27,7 @@ export interface Event {
   event_fee?: string;
   is_registered: boolean;
   status: 'draft' | 'published' | 'cancelled' | 'completed';
-  type: 'webinar' | 'workshop' | 'conference' | 'meetup';
+  type: 'meetup' | 'bootcamp' | 'seminar' | 'conference' | 'workshop' | 'hackathon' | 'webinar' | 'panel' | 'networking' | 'other';
   created_at: string;
   updated_at: string;
 }
@@ -51,7 +51,7 @@ export interface CreateEventData {
   registration_fee?: number;
   event_fee?: number;
   capacity?: number;
-  type?: 'webinar' | 'workshop' | 'conference' | 'meetup';
+  type?: 'meetup' | 'bootcamp' | 'seminar' | 'conference' | 'workshop' | 'hackathon' | 'webinar' | 'panel' | 'networking' | 'other';
 }
 
 export interface EventApplication {
@@ -65,6 +65,7 @@ export interface EventApplication {
     is_online?: boolean;
     event_url?: string;
     image_url?: string;
+    type?: string;
   };
   user: {
     id: number;
@@ -145,6 +146,7 @@ const normalizeEventApplicationsResponse = (data: unknown): EventApplicationsRes
           is_online: item.event_is_online,
           event_url: item.event_url,
           image_url: item.event_image_url,
+          type: item.event_type || item.type,
         },
         user: item.user || { id: 0, username: '', email: '', full_name: '' },
         status: item.status || 'pending',
