@@ -73,9 +73,6 @@ const EnterprisePage: React.FC = () => {
           {...fadeUp(0)}
           className="relative z-10 text-center max-w-4xl mx-auto px-6"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white/90 text-xs font-bold tracking-widest uppercase mb-6 ring-1 ring-white/20">
-            Enterprise
-          </span>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight">
             Enterprise{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-purple-100">
@@ -97,7 +94,7 @@ const EnterprisePage: React.FC = () => {
             </Link>
             <Link
               to="/courses"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-white/10 backdrop-blur-sm text-white font-bold text-sm hover:bg-white/20 transition-all ring-1 ring-white/25"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-white text-purple-800 font-bold text-sm hover:bg-purple-50 transition-all shadow-lg"
             >
               Explore Courses
               <ChevronRight size={18} />
@@ -129,12 +126,12 @@ const EnterprisePage: React.FC = () => {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex flex-wrap justify-center gap-8">
             {services.map((s, i) => (
               <motion.div
                 key={i}
                 {...fadeUp(0.1 + i * 0.05)}
-                className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-purple-200/50 hover:shadow-xl transition-all duration-500"
+                className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-purple-200/50 hover:shadow-xl transition-all duration-500 w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.333rem)]"
               >
                 <div className="relative h-52 overflow-hidden">
                   <img
@@ -144,12 +141,12 @@ const EnterprisePage: React.FC = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                   <div className="absolute bottom-5 left-5">
-                    <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white ring-1 ring-white/25 group-hover:bg-purple-600 group-hover:ring-0 transition-all duration-300">
+                    <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg group-hover:bg-purple-700 transition-all duration-300">
                       <s.icon size={22} />
                     </div>
                   </div>
                   <div className="absolute top-5 right-5">
-                    <span className="text-xs font-bold text-white/80 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full">
+                    <span className="text-xs font-bold text-white bg-purple-600/90 px-3 py-1 rounded-full shadow-md">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
@@ -165,7 +162,7 @@ const EnterprisePage: React.FC = () => {
                     {s.highlight.split(", ").map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full font-medium"
+                        className="text-xs text-gray-700 bg-gray-100 px-2.5 py-1 rounded-full font-medium"
                       >
                         {tag}
                       </span>
@@ -210,7 +207,7 @@ const EnterprisePage: React.FC = () => {
             </Link>
             <Link
               to="/"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-white/10 backdrop-blur-sm text-white font-bold text-sm hover:bg-white/20 transition-all ring-1 ring-white/25"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-purple-600/20 backdrop-blur-sm text-purple-200 font-bold text-sm hover:bg-purple-600/40 hover:text-white transition-all ring-1 ring-purple-400/30"
             >
               Back to Home
             </Link>
