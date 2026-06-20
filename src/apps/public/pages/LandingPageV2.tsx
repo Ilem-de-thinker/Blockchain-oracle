@@ -41,7 +41,6 @@ const Navbar: React.FC = () => {
     { name: "Courses", href: "#courses" },
     { name: "Events", href: "#events" },
     { name: "Enterprise", href: "#enterprise" },
-    { name: "Testimonials", href: "#testimonials" },
   ];
 
   const handleNavClick = (href: string) => {
@@ -674,61 +673,65 @@ const PlatformFeatures: React.FC = () => {
   ];
 
   return (
-    <section className="py-32 bg-gray-50 relative">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-32 bg-white relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-purple-200/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl" />
+      </div>
+      <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+          <motion.span
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 py-1.5 px-5 rounded-full bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200/60 text-purple-700 text-[11px] font-bold tracking-[0.2em] uppercase mb-5 shadow-sm"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
             Features
-          </span>
-          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">
+          </motion.span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-5 tracking-tight">
             Powerful{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-500">
               Platform
             </span>{" "}
             Features
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed font-medium">
             Structured blockchain education and enterprise services designed for
             African learners and organizations.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {features.map((f, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -8 }}
+              transition={{ delay: i * 0.08, duration: 0.5 }}
+              whileHover={{ y: -6 }}
               className="group relative"
             >
-              {f.bento ? (
-                <>
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500" />
-                  <div className="relative bg-white border border-transparent rounded-2xl p-8 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10">
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center text-white text-xl mb-6 group-hover:scale-110 transition-transform`}>
-                      <i className={f.icon}></i>
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-3">{f.title}</h3>
-                    <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
-                  </div>
-                </>
-              ) : (
-                <div className="bg-white border border-gray-100 rounded-2xl p-8 hover:border-purple-200 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/5">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center text-white text-xl mb-6 group-hover:scale-110 transition-transform`}>
-                    <i className={f.icon}></i>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-3">{f.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+              <div className="absolute inset-0 bg-gradient-to-b from-purple-600/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative bg-white border border-gray-100 rounded-2xl p-7 transition-all duration-300 group-hover:border-purple-200/60 group-hover:shadow-[0_8px_30px_-5px_rgba(139,92,246,0.12)]">
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${f.color} flex items-center justify-center text-white text-base mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+                  <i className={f.icon}></i>
                 </div>
-              )}
+                <h3 className="text-[17px] font-bold text-gray-900 mb-2.5 group-hover:text-purple-700 transition-colors">{f.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{f.desc}</p>
+                <div className="mt-5 pt-4 border-t border-gray-50 flex items-center gap-1.5 text-[11px] font-semibold text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span>Learn more</span>
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -765,11 +768,8 @@ const CoursesPreview: React.FC = () => {
   }, []);
 
   return (
-    <section id="courses" className="py-32 bg-white relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] bg-purple-500/10 rounded-full blur-3xl" />
-      </div>
-      <div className="max-w-7xl mx-auto px-6 relative">
+    <section id="courses" className="py-32 bg-white">
+      <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -777,10 +777,10 @@ const CoursesPreview: React.FC = () => {
           className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"
         >
           <div>
-            <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100/70 border border-purple-200/50 text-purple-700 text-xs font-bold tracking-[0.15em] uppercase mb-4 backdrop-blur-sm">
-              COURSES
+            <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+              Courses
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900">
               Featured{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
                 Courses
@@ -789,7 +789,7 @@ const CoursesPreview: React.FC = () => {
           </div>
           <Link
             to="/courses"
-            className="text-purple-600 hover:text-purple-700 font-semibold flex items-center gap-2 text-sm group"
+            className="text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2 text-sm group"
           >
             View All Courses{" "}
             <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
@@ -797,98 +797,77 @@ const CoursesPreview: React.FC = () => {
         </motion.div>
 
         {coursesLoading ? (
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((s) => (
               <div
                 key={s}
-                className="animate-pulse bg-white border border-slate-100 rounded-2xl overflow-hidden"
+                className="animate-pulse bg-white border border-gray-100 rounded-2xl overflow-hidden"
               >
-                <div className="h-48 bg-slate-200" />
+                <div className="h-44 bg-gray-100" />
                 <div className="p-5 space-y-3">
-                  <div className="h-4 bg-slate-200 rounded w-3/4" />
-                  <div className="h-3 bg-slate-200 rounded w-1/2" />
+                  <div className="h-4 bg-gray-100 rounded w-3/4" />
+                  <div className="h-3 bg-gray-100 rounded w-1/2" />
                   <div className="flex justify-between pt-2">
-                    <div className="h-5 bg-slate-200 rounded w-16" />
-                    <div className="w-9 h-9 bg-slate-200 rounded-full" />
+                    <div className="h-5 bg-gray-100 rounded w-16" />
+                    <div className="w-10 h-10 bg-gray-100 rounded-xl" />
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredCourses.slice(0, 4).map((c, i) => (
-              <motion.div
-                key={c.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Link to={`/courses/${c.id}`} className="block group">
-                  <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden transition-all duration-300 group-hover:border-purple-200 group-hover:shadow-lg group-hover:shadow-purple-100/50">
-                    <div className="relative h-48 bg-slate-900 overflow-hidden">
-                      <div className="absolute inset-0 opacity-60" style={{
-                        background: `
-                          radial-gradient(ellipse 120% 80% at 20% 30%, rgba(139,92,246,0.35) 0%, transparent 60%),
-                          radial-gradient(ellipse 100% 60% at 80% 40%, rgba(167,139,250,0.25) 0%, transparent 60%),
-                          radial-gradient(ellipse 80% 80% at 50% 70%, rgba(124,58,237,0.2) 0%, transparent 60%)
-                        `
-                      }} />
-                      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 200" preserveAspectRatio="none" fill="none">
-                        <path d="M0 140 Q 80 100, 160 140 T 320 140 T 480 140" stroke="url(#meshGrad)" strokeWidth="1.2" opacity="0.4" />
-                        <path d="M0 90 Q 80 50, 160 90 T 320 90 T 480 90" stroke="url(#meshGrad)" strokeWidth="0.8" opacity="0.3" />
-                        <path d="M0 170 Q 80 150, 160 170 T 320 170 T 480 170" stroke="url(#meshGrad)" strokeWidth="0.6" opacity="0.2" />
-                        <path d="M0 60 Q 80 30, 160 60 T 320 60 T 480 60" stroke="url(#meshGrad)" strokeWidth="0.5" opacity="0.15" />
-                        <line x1="60" y1="0" x2="60" y2="200" stroke="rgba(167,139,250,0.06)" strokeWidth="0.5" />
-                        <line x1="150" y1="0" x2="150" y2="200" stroke="rgba(167,139,250,0.04)" strokeWidth="0.5" />
-                        <line x1="250" y1="0" x2="250" y2="200" stroke="rgba(167,139,250,0.06)" strokeWidth="0.5" />
-                        <line x1="340" y1="0" x2="340" y2="200" stroke="rgba(167,139,250,0.04)" strokeWidth="0.5" />
-                        <defs>
-                          <linearGradient id="meshGrad" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="rgba(167,139,250,0)" />
-                            <stop offset="25%" stopColor="rgba(139,92,246,0.5)" />
-                            <stop offset="50%" stopColor="rgba(124,58,237,0.6)" />
-                            <stop offset="75%" stopColor="rgba(139,92,246,0.5)" />
-                            <stop offset="100%" stopColor="rgba(167,139,250,0)" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-white/[0.04] text-7xl font-black select-none tracking-tighter">
+              <Link key={c.id} to={`/courses/${c.id}`}>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ y: -4 }}
+                  className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-purple-200 transition-all hover:shadow-lg"
+                >
+                  <div className="relative h-44 overflow-hidden">
+                    {c.thumbnail_url ? (
+                      <img
+                        src={c.thumbnail_url}
+                        alt={c.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center">
+                        <span className="text-white/20 text-6xl font-black">
                           {c.title.charAt(0)}
                         </span>
                       </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
-                      {c.level && (
-                        <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-purple-100/80 backdrop-blur-sm text-purple-800 text-[11px] font-bold uppercase tracking-wider border border-purple-200/40">
-                          {c.level}
-                        </span>
-                      )}
-                    </div>
-                    <div className="p-5">
-                      <h3 className="font-bold text-slate-900 mb-1.5 group-hover:text-purple-600 transition-colors line-clamp-1 text-base">
-                        {c.title}
-                      </h3>
-                      <p className="text-sm text-slate-400 line-clamp-2 mb-4 leading-relaxed">
-                        {c.description}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold text-slate-900">
-                          {parseFloat(c.total_amount || "0") === 0
-                            ? "FREE"
-                            : `₦${c.total_amount}`}
-                        </span>
-                        <div className="w-9 h-9 rounded-full bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:scale-110 transition-all flex items-center justify-center">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent" />
+                    {c.level && (
+                      <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-purple-600/90 text-white text-[10px] font-bold uppercase tracking-wider">
+                        {c.level}
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors line-clamp-1">
+                      {c.title}
+                    </h3>
+                    <p className="text-xs text-gray-400 line-clamp-2 mb-4">
+                      {c.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xl font-black text-gray-900">
+                        {parseFloat(c.total_amount || "0") === 0
+                          ? "FREE"
+                          : `₦${c.total_amount}`}
+                      </span>
+                      <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all flex items-center justify-center">
+                        <i className="fas fa-arrow-right text-xs"></i>
                       </div>
                     </div>
                   </div>
-                </Link>
-              </motion.div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         )}
