@@ -830,7 +830,13 @@ const CoursesPreview: React.FC = () => {
 
   return (
     <section id="courses" className="py-20 lg:py-24 relative overflow-hidden">
-      <HexPatternBg />
+      <div className="absolute inset-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+          style={{ backgroundImage: 'url("/featured-courses.png")' }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-white/45 to-white/55" />
+      </div>
       <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
       <Reveal className="text-center mb-12">
         <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
