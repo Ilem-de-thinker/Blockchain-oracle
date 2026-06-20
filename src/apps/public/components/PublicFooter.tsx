@@ -18,7 +18,7 @@ const PublicFooter: React.FC = () => (
             <LogoText variant="footer" size="md" showIcon={true} className="footer-logo-text" />
           </Link>
           <p className="text-sm text-white/60 leading-relaxed">
-            Africa's Premiere Blockchain and Cryptocurrency Adoption Hub.
+            Africa's Premiere Blockchain and Cryptocurrency Social Enterprise
           </p>
           <div className="flex gap-3">
             {[

@@ -50,59 +50,19 @@ import GoogleSignInModal from "@/components/GoogleSignInModal";
 import LogoText from "@/components/LogoText";
 
 const HexPatternBg: React.FC = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none select-none" aria-hidden>
-    <svg
-      className="w-full h-full opacity-[0.07]"
-      viewBox="0 0 400 400"
-      preserveAspectRatio="xMidYMid slice"
-      style={{ animation: "driftUp 35s linear infinite" }}
-    >
-      <defs>
-        <pattern id="hex-purple" patternUnits="userSpaceOnUse" width="86.6" height="100" patternTransform="scale(0.8)">
-          <path
-            d="M43.3 0 L86.6 25 L86.6 75 L43.3 100 L0 75 L0 25 Z"
-            fill="none"
-            stroke="#7C3AED"
-            strokeWidth="3"
-          />
-          <path
-            d="M43.3 100 L86.6 125 L86.6 175 L43.3 200 L0 175 L0 125 Z"
-            fill="none"
-            stroke="#7C3AED"
-            strokeWidth="3"
-          />
-          <path
-            d="M0 25 L43.3 50 L43.3 100 L0 125 Z"
-            fill="none"
-            stroke="#7C3AED"
-            strokeWidth="2"
-          />
-          <path
-            d="M86.6 25 L43.3 50 L43.3 0 Z"
-            fill="none"
-            stroke="#7C3AED"
-            strokeWidth="2"
-          />
-          <path
-            d="M86.6 75 L43.3 50 L43.3 100 Z"
-            fill="none"
-            stroke="#7C3AED"
-            strokeWidth="2"
-          />
-          <path
-            d="M86.6 175 L43.3 150 L43.3 200 Z"
-            fill="none"
-            stroke="#7C3AED"
-            strokeWidth="2"
-          />
-        </pattern>
-      </defs>
-      <rect width="100%" height="200%" fill="url(#hex-purple)" />
-    </svg>
+  <div
+    className="absolute inset-0 overflow-hidden pointer-events-none select-none opacity-10"
+    aria-hidden
+    style={{
+      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='69.28' height='80' viewBox='0 0 69.28 80'%3E%3Cpath d='M34.64 0 L69.28 20 L69.28 60 L34.64 80 L0 60 L0 20 Z' fill='none' stroke='%237C3AED' stroke-width='2.5'/%3E%3Cpath d='M34.64 80 L69.28 100 L69.28 140 L34.64 160 L0 140 L0 100 Z' fill='none' stroke='%237C3AED' stroke-width='2.5'/%3E%3Cpath d='M0 20 L34.64 40 L34.64 80 L0 100 Z' fill='none' stroke='%237C3AED' stroke-width='1.5'/%3E%3Cpath d='M69.28 20 L34.64 40 L34.64 0 Z' fill='none' stroke='%237C3AED' stroke-width='1.5'/%3E%3Cpath d='M69.28 60 L34.64 40 L34.64 80 Z' fill='none' stroke='%237C3AED' stroke-width='1.5'/%3E%3C/svg%3E")`,
+      backgroundSize: "69.28px 80px",
+      animation: "bgDriftUp 40s linear infinite",
+    }}
+  >
     <style>{`
-      @keyframes driftUp {
-        0% { transform: translateY(0); }
-        100% { transform: translateY(-50%); }
+      @keyframes bgDriftUp {
+        0% { background-position: 0 0; }
+        100% { background-position: 0 -80px; }
       }
     `}</style>
   </div>
