@@ -1,22 +1,162 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll, useSpring } from "framer-motion";
+import {
+  Menu,
+  X,
+  Star,
+  Play,
+  Check,
+  ArrowRight,
+  GraduationCap,
+  Code2,
+  ChartLine,
+  ShieldCheck,
+  Users,
+  Globe,
+  Calendar,
+  ChevronRight,
+  ExternalLink,
+  BookOpen,
+  Layers,
+  Terminal,
+  LineChart,
+  TrendingUp,
+  UserCheck,
+  Rocket,
+  Laptop,
+  Briefcase,
+  Building2,
+  Network,
+  Coins,
+  Lightbulb,
+  ArrowUpRight,
+  Loader2,
+} from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Parallax } from "swiper/modules";
 import { authApi, mapBackendRoleToFrontend } from "@/src/api/auth";
 import { coursesApi, Course } from "@/src/api/courses";
+
+import "swiper/css";
+import "swiper/css/effect-fade";
+import "swiper/css/parallax";
 
 import testimonialsApi, { Testimonial } from "@/src/api/testimonials";
 import { UserRole, User } from "@/types";
 import GoogleSignInModal from "@/components/GoogleSignInModal";
 import LogoText from "@/components/LogoText";
 
-import "swiper/css";
-import "swiper/css/effect-fade";
-import "swiper/css/parallax";
+const testimonialsData = [
+  {
+    name: "Ita Otu",
+    role: "Blockchain Architect",
+    image:
+      "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "The community features make learning social and engaging. I've made great connections with fellow learners",
+  },
+  {
+    name: "Effiom Bassey",
+    role: "Blockchain Developer",
+    image:
+      "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "AlphaKing Oracle transformed my learning experience. The AI-powered guidance helped me choose the perfect course path",
+  },
+  {
+    name: "Uyai Ekpo",
+    role: "DeFi Analyst",
+    image:
+      "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "The personalized learning paths really helped me stay focused and motivated throughout my courses ",
+  },
+  {
+    name: "Idara Edet",
+    role: "Smart Contract Engineer",
+    image:
+      "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "The project-based learning approach is fantastic. I've gained practical skills that I'm already using in my career",
+  },
+  {
+    name: "Ekaette Eyo",
+    role: "Crypto Analyst",
+    image:
+      "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "The AI mentor provided valuable feedback that helped me improve my coding skills significantly",
+  },
+  {
+    name: "Okon Ubi",
+    role: "Web3 Developer",
+    image:
+      "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2000",
+    quote:
+      "Great platform for self-paced learning. The interactive exercises really help reinforce the concepts",
+  },
+];
 
+const useScrollReveal = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
+  return { ref, visible };
+};
+
+const Reveal: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}> = ({ children, className = "", delay = 0 }) => {
+  const { ref, visible } = useScrollReveal();
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(30px)",
+        transition: `all 0.8s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+const ProgressBar: React.FC = () => {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  return (
+    <motion.div
+      className="fixed top-0 left-0 h-1 bg-purple-600 w-full z-[100] origin-left"
+      style={{ scaleX }}
+    />
+  );
+};
 
 const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -30,21 +170,20 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleLogout = async () => {
-    await authApi.logout();
-    window.location.href = "/";
-  };
-
   const links = [
     { name: "Home", href: "#hero" },
     { name: "About", href: "#about" },
     { name: "Courses", href: "#courses" },
     { name: "Events", href: "#events" },
-    { name: "Enterprise", href: "#enterprise" },
+    { name: "Enterprise", href: "/enterprise" },
   ];
 
   const handleNavClick = (href: string) => {
     setMobileOpen(false);
+    if (href.startsWith("/")) {
+      navigate(href);
+      return;
+    }
     requestAnimationFrame(() => {
       const el = document.querySelector(href);
       if (el) {
@@ -55,154 +194,79 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-[150] transition-all duration-500 ${
+    <nav
+      className={`fixed top-0 w-full z-50 h-20 px-6 lg:px-10 flex items-center justify-between transition-all duration-300 ${
         scrolled
-          ? "bg-white backdrop-blur-xl border-b border-purple-100 shadow-lg shadow-purple-500/5"
+          ? "bg-white/80 backdrop-blur-md shadow-sm border-b border-purple-100/30"
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <motion.div
-            whileHover={{ rotate: 12 }}
-            transition={{ duration: 0.3 }}
-          >
-            <img
-              src="/Logo/logo.png"
-              alt="BlockchainOracle Logo"
-              className="w-8 h-8 object-contain"
-            />
-          </motion.div>
-          <span className="text-xl font-black text-gray-900">
-            Blo|&lt;Chain
-            <span style={{ fontWeight: 300, fontSize: "1.2em" }}>0</span>racle
-          </span>
-        </Link>
-
-        <div className="hidden lg:flex items-center gap-8">
-          {links.map((link) => (
+      <div className="flex items-center gap-8">
+        <LogoText />
+        <div className="hidden md:flex items-center gap-6">
+          {links.map((l) => (
             <button
-              key={link.name}
-              onClick={() => handleNavClick(link.href)}
-              className="text-sm font-medium text-gray-600 hover:text-purple-600 transition-colors relative group"
+              key={l.name}
+              onClick={() => handleNavClick(l.href)}
+              className="text-sm font-semibold text-gray-500 hover:text-purple-600 transition-colors border-b-2 border-transparent hover:border-purple-600 pb-0.5"
             >
-              {link.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple-600 group-hover:w-full transition-all duration-300" />
+              {l.name}
             </button>
           ))}
         </div>
+      </div>
 
-        <div className="hidden lg:flex items-center gap-3">
-          {/* <Link to="/legacy" className="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-purple-600 border border-gray-200 hover:border-purple-300 transition-all">
-            Classic
-          </Link> */}
-          {isAuthenticated ? (
-            <>
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="px-5 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all"
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={handleLogout}
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
-                title="Sign Out"
-              >
-                <i className="fas fa-sign-out-alt"></i>
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="px-5 py-2 rounded-xl text-sm font-bold text-gray-600 hover:text-purple-600 border border-gray-200 hover:border-purple-300 transition-all"
-              >
-                Sign In
-              </Link>
-              <Link
-                to="/register"
-                className="px-5 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all"
-              >
-                Get Started
-              </Link>
-            </>
-          )}
-        </div>
-
+      <div className="hidden md:flex items-center gap-3">
         <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="lg:hidden text-gray-900 text-xl"
+          onClick={() => navigate("/login")}
+          className="px-5 py-2 border-2 border-purple-600 text-purple-600 text-sm font-bold rounded-full hover:bg-purple-50 transition-all"
         >
-          {mobileOpen ? (
-            <i className="fas fa-times"></i>
-          ) : (
-            <i className="fas fa-bars"></i>
-          )}
+          Sign In
+        </button>
+        <button
+          onClick={() => navigate("/register")}
+          className="px-5 py-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-bold rounded-full shadow-lg hover:shadow-purple-200 hover:-translate-y-0.5 transition-all"
+        >
+          Get Started
         </button>
       </div>
 
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white/95 backdrop-blur-xl border-t border-purple-100"
-          >
-            <div className="px-6 py-4 space-y-3">
-              {links.map((link) => (
-                <button
-                  key={link.name}
-                  onClick={() => handleNavClick(link.href)}
-                  className="block w-full text-left text-gray-600 hover:text-purple-600 py-2 font-medium"
-                >
-                  {link.name}
-                </button>
-              ))}
-              <div className="pt-3 border-t border-gray-100 flex flex-col gap-2">
-                {/* <Link to="/legacy" className="w-full py-2.5 rounded-xl text-sm font-bold text-center border border-gray-200 text-gray-400 hover:text-purple-600 hover:border-purple-300 transition-all">Classic Homepage</Link> */}
-                {isAuthenticated ? (
-                  <>
-                    <button
-                      onClick={() => navigate("/dashboard")}
-                      className="w-full py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white"
-                    >
-                      Dashboard
-                    </button>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full py-2.5 rounded-xl text-sm font-bold text-red-500 border border-red-200 hover:bg-red-50 transition-all"
-                    >
-                      <i className="fas fa-sign-out-alt mr-2"></i>Sign Out
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      to="/login"
-                      className="w-full py-2.5 rounded-xl text-sm font-bold text-center border border-gray-200 text-gray-600"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      to="/register"
-                      className="w-full py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white text-center"
-                    >
-                      Get Started
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+      <button
+        className="md:hidden p-2 text-gray-700"
+        onClick={() => setMobileOpen(!mobileOpen)}
+      >
+        {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {mobileOpen && (
+        <div className="absolute top-20 left-0 right-0 bg-white border-b border-purple-100 shadow-lg p-6 md:hidden">
+          <div className="flex flex-col gap-4">
+            {links.map((l) => (
+              <button
+                key={l.name}
+                onClick={() => handleNavClick(l.href)}
+                className="text-sm font-semibold text-gray-700 hover:text-purple-600 transition-colors text-left"
+              >
+                {l.name}
+              </button>
+            ))}
+            <hr className="border-purple-100" />
+            <button
+              onClick={() => { setMobileOpen(false); navigate("/login"); }}
+              className="px-5 py-2.5 border-2 border-purple-600 text-purple-600 text-sm font-bold rounded-full text-center"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => { setMobileOpen(false); navigate("/register"); }}
+              className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-bold rounded-full text-center"
+            >
+              Get Started
+            </button>
+          </div>
+        </div>
+      )}
+    </nav>
   );
 };
 
@@ -298,7 +362,6 @@ const HeroCarousel: React.FC = () => {
         {slides.map((slide, i) => (
           <SwiperSlide key={i}>
             <div className="h-full relative flex items-center overflow-hidden">
-              {/* Background Image */}
               <motion.img
                 initial={{ scale: 1.2 }}
                 animate={{ scale: 1 }}
@@ -307,12 +370,9 @@ const HeroCarousel: React.FC = () => {
                 alt=""
                 className="absolute inset-0 w-full h-full object-cover"
               />
-
-              {/* Overlay Gradient for Readability */}
               <div
                 className={`absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent z-0`}
               />
-
               <div className="relative z-10 pl-8 md:pl-16 lg:pl-24 max-w-full md:max-w-[45%] lg:max-w-3xl">
                 <motion.h1
                   initial={{ opacity: 0, y: 60 }}
@@ -475,126 +535,68 @@ const HeroSection: React.FC = () => (
 );
 
 const partners = [
-  {
-    name: "Binance",
-    logo: "/crypto-logos/bnb.svg",
-  },
-  {
-    name: "Ethereum",
-    logo: "/crypto-logos/eth.svg",
-  },
-  {
-    name: "Polygon",
-    logo: "/crypto-logos/polygon.svg",
-  },
-  { name: "Solana", logo: "/crypto-logos/solana.svg" },
-  {
-    name: "Chainlink",
-    logo: "/crypto-logos/chainlink.svg",
-  },
-  {
-    name: "Cardano",
-    logo: "/crypto-logos/cardano.svg",
-  },
-  {
-    name: "Polkadot",
-    logo: "/crypto-logos/polkadot.svg",
-  },
-  {
-    name: "Avalanche",
-    logo: "/crypto-logos/avalanche.svg",
-  },
+  "Binance", "Ethereum", "Polygon", "Cardano",
+  "Solana", "Coinbase", "Chainlink",
 ];
 
-const TrustedBy: React.FC = () => {
-  return (
-    <section className="py-16 border-y border-gray-100 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
-        <Swiper
-          modules={[Autoplay]}
-          spaceBetween={48}
-          slidesPerView="auto"
-          loop
-          autoplay={{
-            delay: 0,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-          }}
-          speed={3000}
-          className="!overflow-visible"
-        >
-          {[...partners, ...partners].map((p, i) => (
-            <SwiperSlide key={i} className="!w-auto">
-              <div className="flex items-center gap-3 h-12 px-6">
-                <img
-                  src={p.logo}
-                  alt={p.name}
-                  className="h-8 w-auto object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+const TrustedBy: React.FC = () => (
+  <section className="py-12 border-y border-purple-100/30 bg-white overflow-hidden">
+    <div className="overflow-hidden whitespace-nowrap flex relative">
+      <div className="flex items-center gap-20 px-10 animate-scroll">
+        {[...partners, ...partners].map((name, i) => (
+          <span
+            key={i}
+            className="text-gray-400 font-bold text-2xl grayscale hover:grayscale-0 transition-all opacity-50 hover:opacity-100 cursor-pointer"
+          >
+            {name}
+          </span>
+        ))}
       </div>
-    </section>
-  );
-};
+    </div>
+  </section>
+);
 
 const AboutPreview: React.FC = () => (
-  <section id="about" className="py-32 bg-white relative overflow-hidden">
-    <div className="absolute top-0 right-0 w-96 h-96 bg-purple-100/50 rounded-full blur-3xl" />
-    <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-50/50 rounded-full blur-3xl" />
-    <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center relative z-10">
-      <motion.div
-        initial={{ opacity: 0, x: -60 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <div className="relative">
-          <div className="absolute -inset-4 bg-gradient-to-r from-purple-200/40 to-purple-100/40 rounded-3xl blur-xl" />
-          <div className="relative bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-xl">
+  <section id="about" className="py-20 lg:py-24 max-w-7xl mx-auto px-6 lg:px-10">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+      <Reveal>
+        <div className="relative group">
+          <div className="absolute -inset-2 bg-gradient-to-r from-purple-200/40 to-purple-100/40 rounded-3xl blur-xl" />
+          <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl">
             <img
               src="https://images.unsplash.com/photo-1639762681057-408e52192e55?w=600&h=400&fit=crop"
               alt="Blockchain"
-              className="w-full h-90 object-cover"
+              className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-                  <i className="fas fa-play text-purple-600 text-sm"></i>
-                </div>
+            <div className="absolute inset-0 bg-purple-600/20 group-hover:bg-purple-600/10 transition-colors" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center shadow-xl cursor-pointer hover:scale-110 transition-transform">
+                <Play
+                  size={36}
+                  className="text-purple-600 ml-1"
+                  fill="currentColor"
+                />
               </div>
             </div>
           </div>
         </div>
-      </motion.div>
+      </Reveal>
 
-      <motion.div
-        initial={{ opacity: 0, x: 60 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-6">
-          About Us
+      <Reveal delay={0.15}>
+        <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+          ABOUT US
         </span>
-        <h2 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight mb-6">
+        <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
           Blockchain & Web3{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
             Mastery
           </span>{" "}
           for Africa
         </h2>
-        <p className="text-gray-500 text-lg leading-relaxed mb-8">
+        <p className="text-lg text-gray-500 mb-8 leading-relaxed">
           Blockchain Oracle is a leading Blockchain and Web3 education and
           enterprise solutions platform dedicated to empowering Africa's digital
-          future. We provide a comprehensive learning ecosystem where
-          individuals can gain practical knowledge through structured programs
-          in Blockchain Foundations, Web3 Mastery, and Crypto Trading, while
-          organizations access strategic consulting, training, events, and
-          advisory services to accelerate blockchain adoption.{" "}
+          future.
         </p>
         <div className="space-y-4 mb-8">
           {[
@@ -602,26 +604,21 @@ const AboutPreview: React.FC = () => (
             "Combining education with real-world practice through events and consulting",
             "Supporting enterprises with end-to-end advisory, and launch strategies",
           ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className="flex items-start gap-3"
-            >
-              <i className="fas fa-check-circle text-purple-600 mt-1 shrink-0"></i>
+            <div key={i} className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-green-50 flex items-center justify-center shrink-0 mt-0.5">
+                <Check size={14} className="text-green-600" />
+              </div>
               <span className="text-gray-600 text-sm font-medium">{item}</span>
-            </motion.div>
+            </div>
           ))}
         </div>
         <Link
           to="/courses"
-          className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all"
+          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all"
         >
-          Explore Courses <i className="fas fa-arrow-right text-xs"></i>
+          Explore Courses <ArrowRight size={14} />
         </Link>
-      </motion.div>
+      </Reveal>
     </div>
   </section>
 );
@@ -629,110 +626,98 @@ const AboutPreview: React.FC = () => (
 const PlatformFeatures: React.FC = () => {
   const features = [
     {
-      icon: "fas fa-graduation-cap",
+      image: "/images/features/learning.jpg",
+      icon: BookOpen,
       title: "Structured Learning",
       desc: "Begin your blockchain journey with clear curriculum pathways from foundational blockchain concepts to intermediate Web3 mastery.",
-      color: "from-purple-500 to-pink-500",
-      bento: true,
+      tall: true,
     },
     {
-      icon: "fas fa-code",
+      image: "/images/features/practice.jpg",
+      icon: Terminal,
       title: "Real-World Practice",
       desc: "Engage in Events, webinars, and consulting services that bridge theory to implementation.",
-      color: "from-blue-500 to-cyan-500",
-      bento: false,
+      tall: false,
     },
     {
-      icon: "fas fa-chart-line",
+      image: "/images/features/progress.jpg",
+      icon: LineChart,
       title: "Progress Tracking",
       desc: "Monitor your Journey with module completion tracking, visual progress indicators, and estimated learning timeline",
-      color: "from-purple-500 to-purple-600",
-      bento: false,
+      tall: false,
     },
     {
-      icon: "fas fa-shield-alt",
+      image: "/images/features/certified.jpg",
+      icon: ShieldCheck,
       title: "Certified Programs",
       desc: "Showcase your achievements with downloadable certificates backed by unique verification codes upon successful course completion.",
-      color: "from-amber-500 to-orange-500",
-      bento: false,
+      tall: true,
     },
     {
-      icon: "fas fa-users",
+      image: "/images/features/community.jpg",
+      icon: Users,
       title: "Community Hub",
       desc: "Industry-relevant courses and case studies aligned with African economic system and technological environment.",
-      color: "from-rose-500 to-red-500",
-      bento: false,
+      tall: false,
     },
     {
-      icon: "fas fa-globe",
+      image: "/images/features/africa.jpg",
+      icon: Globe,
       title: "African-Focused Content",
       desc: "Curricula and case studies tailored to African markets, regulations, and infrastructure realities.",
-      color: "from-indigo-500 to-purple-500",
-      bento: true,
+      tall: true,
     },
   ];
 
   return (
-    <section className="py-32 bg-white relative overflow-hidden">
+    <section className="py-20 lg:py-24 bg-purple-50 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 -left-32 w-96 h-96 bg-purple-200/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl" />
       </div>
-      <div className="max-w-7xl mx-auto px-6 relative">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-20"
-        >
-          <motion.span
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 py-1.5 px-5 rounded-full bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200/60 text-purple-700 text-[11px] font-bold tracking-[0.2em] uppercase mb-5 shadow-sm"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 relative">
+        <Reveal className="text-center mb-16">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
             Features
-          </motion.span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-5 tracking-tight">
+          </span>
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4">
             Powerful{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
               Platform
             </span>{" "}
             Features
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed font-medium">
+          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
             Structured blockchain education and enterprise services designed for
             African learners and organizations.
           </p>
-        </motion.div>
+        </Reveal>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="md:columns-2 lg:columns-3 gap-5 space-y-5">
           {features.map((f, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
-              whileHover={{ y: -6 }}
-              className="group relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-b from-purple-600/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-white border border-gray-100 rounded-2xl p-7 transition-all duration-300 group-hover:border-purple-200/60 group-hover:shadow-[0_8px_30px_-5px_rgba(139,92,246,0.12)]">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${f.color} flex items-center justify-center text-white text-base mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-                  <i className={f.icon}></i>
-                </div>
-                <h3 className="text-[17px] font-bold text-gray-900 mb-2.5 group-hover:text-purple-700 transition-colors">{f.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{f.desc}</p>
-                <div className="mt-5 pt-4 border-t border-gray-50 flex items-center gap-1.5 text-[11px] font-semibold text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span>Learn more</span>
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
+            <Reveal key={i} delay={i * 0.08}>
+              <div
+                className={`break-inside-avoid group relative overflow-hidden rounded-2xl cursor-pointer max-md:min-h-[240px] ${f.tall ? "min-h-[340px]" : "min-h-[200px]"}`}
+              >
+                <img
+                  src={f.image}
+                  alt={f.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent" />
+                <div className="relative h-full flex flex-col justify-end p-6 lg:p-8">
+                  <div className="w-11 h-11 bg-white/15 backdrop-blur-md rounded-xl flex items-center justify-center mb-4 text-white ring-1 ring-white/20">
+                    <f.icon size={22} />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {f.title}
+                  </h3>
+                  <p className="text-white/70 text-sm leading-relaxed line-clamp-3">
+                    {f.desc}
+                  </p>
                 </div>
               </div>
-            </motion.div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -758,8 +743,8 @@ const CoursesPreview: React.FC = () => {
           true,
         );
         setFeaturedCourses(response.items || []);
-      } catch (err) {
-        console.error("Failed to fetch featured courses:", err);
+      } catch {
+        // silently fail
       } finally {
         setCoursesLoading(false);
       }
@@ -768,65 +753,56 @@ const CoursesPreview: React.FC = () => {
   }, []);
 
   return (
-    <section id="courses" className="py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"
-        >
-          <div>
-            <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+    <section id="courses" className="py-20 lg:py-24 max-w-7xl mx-auto px-6 lg:px-10">
+      <Reveal className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+        <div>
+          <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+            Courses
+          </span>
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900">
+            Featured{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
               Courses
             </span>
-            <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-              Featured{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
-                Courses
-              </span>
-            </h2>
-          </div>
-          <Link
-            to="/courses"
-            className="text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2 text-sm group"
-          >
-            View All Courses{" "}
-            <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-          </Link>
-        </motion.div>
+          </h2>
+        </div>
+        <Link
+          to="/courses"
+          className="text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2 text-sm group"
+        >
+          View All Courses{" "}
+          <ArrowRight
+            size={14}
+            className="group-hover:translate-x-1 transition-transform"
+          />
+        </Link>
+      </Reveal>
 
-        {coursesLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((s) => (
-              <div
-                key={s}
-                className="animate-pulse bg-white border border-gray-100 rounded-2xl overflow-hidden"
-              >
-                <div className="h-44 bg-gray-100" />
-                <div className="p-5 space-y-3">
-                  <div className="h-4 bg-gray-100 rounded w-3/4" />
-                  <div className="h-3 bg-gray-100 rounded w-1/2" />
-                  <div className="flex justify-between pt-2">
-                    <div className="h-5 bg-gray-100 rounded w-16" />
-                    <div className="w-10 h-10 bg-gray-100 rounded-xl" />
-                  </div>
+      {coursesLoading ? (
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((s) => (
+            <div
+              key={s}
+              className="animate-pulse bg-white border border-purple-100 rounded-2xl overflow-hidden"
+            >
+              <div className="h-44 bg-purple-50" />
+              <div className="p-6 space-y-3">
+                <div className="h-4 bg-purple-50 rounded w-3/4" />
+                <div className="h-3 bg-purple-50 rounded w-1/2" />
+                <div className="flex justify-between pt-2">
+                  <div className="h-5 bg-purple-50 rounded w-16" />
+                  <div className="w-10 h-10 bg-purple-50 rounded-xl" />
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredCourses.slice(0, 4).map((c, i) => (
-              <Link key={c.id} to={`/courses/${c.id}`}>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  whileHover={{ y: -4 }}
-                  className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-purple-200 transition-all hover:shadow-lg"
-                >
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {featuredCourses.slice(0, 4).map((c, i) => (
+            <Link key={c.id} to={`/courses/${c.id}`}>
+              <Reveal delay={i * 0.08}>
+                <div className="group bg-white rounded-2xl overflow-hidden border border-purple-100/50 shadow-sm hover:shadow-xl transition-all">
                   <div className="relative h-44 overflow-hidden">
                     {c.thumbnail_url ? (
                       <img
@@ -835,7 +811,7 @@ const CoursesPreview: React.FC = () => {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center">
+                      <div className="w-full h-full bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center">
                         <span className="text-white/20 text-6xl font-black">
                           {c.title.charAt(0)}
                         </span>
@@ -848,7 +824,7 @@ const CoursesPreview: React.FC = () => {
                       </span>
                     )}
                   </div>
-                  <div className="p-5">
+                  <div className="p-6">
                     <h3 className="font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors line-clamp-1">
                       {c.title}
                     </h3>
@@ -862,16 +838,16 @@ const CoursesPreview: React.FC = () => {
                           : `₦${c.total_amount}`}
                       </span>
                       <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all flex items-center justify-center">
-                        <i className="fas fa-arrow-right text-xs"></i>
+                        <ArrowRight size={14} />
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+                </div>
+              </Reveal>
+            </Link>
+          ))}
+        </div>
+      )}
     </section>
   );
 };
@@ -887,9 +863,7 @@ const LearningPaths: React.FC = () => {
         "Network Architecture",
         "Use Cases",
       ],
-      icon: "fas fa-cube",
-      iconBg: "bg-purple-100",
-      iconColor: "text-purple-700",
+      icon: Layers,
     },
     {
       title: "Web3 Developer / Builder",
@@ -900,9 +874,7 @@ const LearningPaths: React.FC = () => {
         "DeFi Protocols",
         "Security",
       ],
-      icon: "fas fa-code",
-      iconBg: "bg-purple-100",
-      iconColor: "text-purple-700",
+      icon: Code2,
     },
     {
       title: "Crypto Literacy & Trading",
@@ -913,63 +885,49 @@ const LearningPaths: React.FC = () => {
         "Fundamental Analysis",
         "Security Practices",
       ],
-      icon: "fas fa-chart-line",
-      iconBg: "bg-orange-100",
-      iconColor: "text-orange-600",
+      icon: TrendingUp,
     },
   ];
 
   return (
-    <section className="py-32 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100/70 border border-purple-200/50 text-purple-700 text-xs font-bold tracking-[0.15em] uppercase mb-4 backdrop-blur-sm">
+    <section className="py-20 lg:py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+        <Reveal className="text-center mb-16">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
             LEARNING PATHS
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900">
             Choose Your{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
               Path
             </span>
           </h2>
-        </motion.div>
+        </Reveal>
 
         <div className="grid md:grid-cols-3 gap-8">
           {paths.map((p, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className="group bg-white border border-slate-100 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 hover:border-slate-200"
-            >
-              <div
-                className={`w-14 h-14 rounded-xl ${p.iconBg} ${p.iconColor} flex items-center justify-center text-xl mb-6`}
-              >
-                <i className={p.icon}></i>
+            <Reveal key={i} delay={i * 0.12}>
+              <div className="group bg-white border border-purple-100/50 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl hover:border-purple-200/50">
+                <div className="w-14 h-14 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 text-xl mb-6 group-hover:bg-purple-600 group-hover:text-white transition-all">
+                  <p.icon size={26} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-6">
+                  {p.title}
+                </h3>
+                <div className="space-y-4">
+                  {p.steps.map((step, j) => (
+                    <div key={j} className="flex items-start gap-4">
+                      <span className="text-sm font-mono text-gray-300 font-semibold w-6 shrink-0 mt-0.5">
+                        {String(j + 1).padStart(2, "0")}
+                      </span>
+                      <span className="text-gray-600 text-sm font-medium leading-relaxed">
+                        {step}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-6">
-                {p.title}
-              </h3>
-              <div className="space-y-4">
-                {p.steps.map((step, j) => (
-                  <div key={j} className="flex items-start gap-4">
-                    <span className="text-sm font-mono text-slate-300 font-semibold w-6 shrink-0 mt-0.5">
-                      {String(j + 1).padStart(2, "0")}
-                    </span>
-                    <span className="text-slate-700 text-sm font-medium leading-relaxed">
-                      {step}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -977,138 +935,37 @@ const LearningPaths: React.FC = () => {
   );
 };
 
-const EnterpriseServices: React.FC = () => {
-  const services = [
-    {
-      title: "Staffing & Recruitment",
-      desc: "Blockchain talent sourcing and recruitment for technical and advisory roles",
-      icon: "fas fa-users",
-    },
-    {
-      title: "Tokenomics Design",
-      desc: "Economic modeling and tokenomics creation for blockchain-based business models",
-      icon: "fas fa-chart-line",
-    },
-    {
-      title: "Business Development",
-      desc: "Partnership strategy and business development support for blockchain adoption",
-      icon: "fas fa-shield-alt",
-    },
-    {
-      title: "Launch-to-Market Strategy",
-      desc: "Go-to-market strategy and launch planning for blockchain products and platforms",
-      icon: "fas fa-rocket",
-    },
-    {
-      title: "Enterprise Platform Development",
-      desc: "Custom enterprise platforms with dedicated user dashboards, course management systems, role-based access control, and comprehensive admin panels tailored to your organization.",
-      icon: "fas fa-laptop-code",
-    },
-  ];
-
-  return (
-    <section id="enterprise" className="py-32 bg-white relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-transparent to-purple-50/50" />
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid md:grid-cols-5 gap-12 lg:gap-16">
-          <div className="md:col-span-2 md:sticky md:top-32 md:self-start">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100 border border-purple-200 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
-                Enterprise
-              </span>
-              <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">
-                Enterprise{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
-                  Services
-                </span>
-              </h2>
-              <p className="text-gray-500 mt-4 leading-relaxed">
-                From web3 webinars and blockchain events to corporate training
-                and consulting, we support African enterprises in adopting
-                emerging technologies.
-              </p>
-            </motion.div>
-          </div>
-
-          <div className="md:col-span-3 grid gap-5">
-            {services.map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ x: 4 }}
-                className="group relative"
-              >
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl blur opacity-0 group-hover:opacity-15 transition duration-500" />
-                <div className="relative bg-white border border-gray-100 rounded-2xl p-6 hover:border-transparent transition-all duration-300 flex items-start gap-5 hover:shadow-lg">
-                  <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
-                    <i className={s.icon}></i>
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">
-                      {s.title}
-                    </h3>
-                    <p className="text-gray-500 text-sm leading-relaxed">
-                      {s.desc}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
 const EventsEmptyState: React.FC = () => (
-  <section id="events" className="py-32 bg-gray-50">
-    <div className="max-w-7xl mx-auto px-6">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"
-      >
+  <section id="events" className="py-20 lg:py-24 bg-[#FAF8FF]">
+    <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <Reveal className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
         <div>
-          <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100/70 border border-purple-200/50 text-purple-700 text-xs font-bold tracking-[0.15em] uppercase mb-4 backdrop-blur-sm">
-            EVENTS
+          <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+            Events
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900">
             Upcoming{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
               Events
             </span>
           </h2>
         </div>
-      </motion.div>
+      </Reveal>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="border-2 border-dashed border-slate-200 rounded-2xl py-20 px-6 flex flex-col items-center justify-center"
-      >
-        <svg className="w-20 h-20 text-slate-300 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          <circle cx="12" cy="16" r="1" fill="currentColor" />
-          <circle cx="16" cy="16" r="1" fill="currentColor" />
-          <circle cx="8" cy="16" r="1" fill="currentColor" />
-        </svg>
-        <div className="relative">
-          <div className="absolute -top-1 -right-2 w-2.5 h-2.5 rounded-full bg-purple-400" />
+      <Reveal>
+        <div className="border-2 border-dashed border-purple-200 rounded-3xl py-20 px-6 flex flex-col items-center justify-center text-center">
+          <div className="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mb-6">
+            <Calendar size={36} className="text-gray-400" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
+            Exciting updates dropping soon
+          </h3>
+          <p className="text-gray-500 max-w-md">
+            We're finalizing our Q4 roadshow across Lagos, Nairobi, and
+            Johannesburg. Stay tuned!
+          </p>
         </div>
-        <p className="text-slate-400 text-sm font-medium">
-          Exciting updates dropping soon. Stay tuned!
-        </p>
-      </motion.div>
+      </Reveal>
     </div>
   </section>
 );
@@ -1127,7 +984,7 @@ const TestimonialCard: React.FC<{
     <div className="bg-white p-6 rounded-2xl shadow-lg shadow-purple-100/50 border border-gray-100 hover:border-purple-200 transition-all flex-shrink-0 mx-2 my-3">
       <div className="flex items-center gap-1 mb-3">
         {[1, 2, 3, 4, 5].map((i) => (
-          <i key={i} className="fas fa-star text-yellow-400 text-xs"></i>
+          <Star key={i} size={12} className="text-yellow-400" fill="currentColor" />
         ))}
       </div>
       <p className="text-gray-600 text-sm leading-relaxed mb-4">
@@ -1198,9 +1055,41 @@ const TestimonialsSection: React.FC = () => {
     const fetchTestimonials = async () => {
       try {
         const data = await testimonialsApi.getPublicTestimonials();
-        setTestimonials(data);
+        const hardcoded = testimonialsData.map((t, i) => ({
+          id: -(i + 1),
+          name: t.name,
+          role: t.role,
+          image: t.image,
+          quote: t.quote,
+          is_public: true,
+          status: "approved" as const,
+          order: i,
+          created_at: "",
+          updated_at: "",
+        }));
+        const seen = new Set<string>();
+        const merged = [...hardcoded, ...data].filter((t) => {
+          const key = `${t.name || t.user?.full_name}|${t.quote}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+        setTestimonials(merged);
       } catch {
-        setTestimonials([]);
+        setTestimonials(
+          testimonialsData.map((t, i) => ({
+            id: -(i + 1),
+            name: t.name,
+            role: t.role,
+            image: t.image,
+            quote: t.quote,
+            is_public: true,
+            status: "approved" as const,
+            order: i,
+            created_at: "",
+            updated_at: "",
+          }))
+        );
       } finally {
         setLoading(false);
       }
@@ -1319,53 +1208,42 @@ const BlogPreview: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="inline-flex items-center py-1 px-4 rounded-full bg-purple-100/70 border border-purple-200/50 text-purple-700 text-xs font-bold tracking-[0.15em] uppercase mb-4 backdrop-blur-sm">
-            BLOG
+    <section className="py-20 lg:py-24 bg-[#FAF8FF]">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+        <Reveal className="text-center mb-16">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold tracking-widest uppercase mb-4">
+            Blog
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900">
             Latest{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
               Insights
             </span>
           </h2>
-        </motion.div>
+        </Reveal>
 
         <div className="grid md:grid-cols-3 gap-6">
           {posts.map((p, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -4 }}
-              className="group bg-white border border-slate-100 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-slate-200"
-            >
-              <div className="relative aspect-video overflow-hidden">
-                <img
-                  src={p.image}
-                  alt={p.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
+            <Reveal key={i} delay={i * 0.1}>
+              <div className="group bg-white border border-purple-100/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+                <div className="relative aspect-video overflow-hidden">
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <div className="p-6">
+                  <span className="inline-block text-xs font-bold text-purple-600 uppercase tracking-wider mb-2.5">
+                    {p.category}
+                  </span>
+                  <h3 className="font-bold text-gray-900 leading-snug group-hover:text-purple-600 transition-colors line-clamp-2 mb-3">
+                    {p.title}
+                  </h3>
+                  <p className="text-sm text-gray-400">{p.date}</p>
+                </div>
               </div>
-              <div className="p-6">
-                <span className="inline-block text-xs font-bold text-violet-600 uppercase tracking-[0.12em] mb-2.5">
-                  {p.category}
-                </span>
-                <h3 className="font-bold text-slate-900 leading-snug group-hover:text-violet-600 transition-colors line-clamp-2 mb-3">
-                  {p.title}
-                </h3>
-                <p className="text-sm text-slate-400">{p.date}</p>
-              </div>
-            </motion.div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -1373,56 +1251,43 @@ const BlogPreview: React.FC = () => {
   );
 };
 
-const CTASection: React.FC = () => (
-  <section className="py-32 relative overflow-hidden">
-    <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-purple-500 to-purple-700" />
-    <div className="absolute inset-0">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/[0.09] rounded-full blur-3xl animate-pulse" />
-    </div>
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="max-w-4xl mx-auto px-6 text-center relative z-10"
-    >
-      <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
-        Ready to Build the <span className="text-white/80">Future?</span>
-      </h2>
-      <p className="text-white/80 text-lg mb-10 max-w-2xl mx-auto">
-        Africa&rsquo;s Premiere Blockchain &amp; Cryptocurrency Social Enterprise. Start your journey into blockchain and Web3 mastery with structured,
-        accessible education designed for Africa.
-      </p>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Link
-          to="/courses"
-          className="px-10 py-4 rounded-2xl text-sm font-bold bg-white text-purple-700 hover:bg-gray-100 transition-all shadow-xl hover:shadow-2xl"
-        >
-          Start Learning Today
-        </Link>
-        <Link
-          to="/register"
-          className="px-10 py-4 rounded-2xl text-sm font-bold border-2 border-white/40 text-white hover:bg-white/10 transition-all"
-        >
-          Create Free Account
-        </Link>
-      </div>
-    </motion.div>
-  </section>
-);
-
-const ScrollProgressBar: React.FC = () => {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
+const CTASection: React.FC = () => {
+  const navigate = useNavigate();
 
   return (
-    <motion.div
-      className="fixed top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-400 z-[200] origin-left"
-      style={{ scaleX }}
-    />
+    <section className="py-20 lg:py-24 max-w-7xl mx-auto px-6 lg:px-10">
+      <Reveal>
+        <div className="bg-purple-600 relative rounded-3xl p-12 lg:p-16 overflow-hidden text-center">
+          <div className="absolute inset-0 opacity-20 pointer-events-none">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-400 rounded-full blur-3xl animate-pulse" />
+          </div>
+          <div className="relative z-10">
+            <h2 className="text-4xl lg:text-5xl font-extrabold text-white mb-6">
+              Ready to Build the Future?
+            </h2>
+            <p className="text-white/80 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
+              Join thousands of African pioneers already building the
+              decentralized economy. No prior experience required.
+            </p>
+            <div className="flex flex-wrap justify-center gap-6">
+              <button
+                onClick={() => navigate("/register")}
+                className="px-10 py-5 bg-white text-purple-600 text-sm font-bold rounded-full hover:scale-105 transition-all shadow-xl"
+              >
+                Get Started Free
+              </button>
+              <button
+                onClick={() => navigate("/courses")}
+                className="px-10 py-5 bg-transparent border-2 border-white text-white text-sm font-bold rounded-full hover:bg-white/10 transition-all"
+              >
+                Learn More
+              </button>
+            </div>
+          </div>
+        </div>
+      </Reveal>
+    </section>
   );
 };
 
@@ -1440,7 +1305,7 @@ const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({
       }
       const timer = setTimeout(() => {
         setShowSignInModal(true);
-      }, 3000);
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -1456,8 +1321,8 @@ const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({
   };
 
   return (
-    <div className="bg-white min-h-screen text-gray-900 overflow-x-hidden">
-      <ScrollProgressBar />
+    <div className="bg-[#FAF8FF] min-h-screen overflow-x-hidden">
+      <ProgressBar />
       <Navbar />
       <HeroSection />
       <TrustedBy />
@@ -1465,16 +1330,9 @@ const LandingPageV2: React.FC<{ onLogin?: (user: User) => void }> = ({
       <PlatformFeatures />
       <CoursesPreview />
       <LearningPaths />
-      <EnterpriseServices />
       <EventsEmptyState />
       <TestimonialsSection />
       <BlogPreview />
-      <div className="relative -mb-1">
-        <svg className="w-full h-16 md:h-24 text-gray-50" viewBox="0 0 1200 60" preserveAspectRatio="none" fill="currentColor">
-          <path d="M0 60 Q 150 0 300 30 Q 450 60 600 30 Q 750 0 900 30 Q 1050 60 1200 30 L1200 60 L0 60 Z" />
-          <path d="M0 60 Q 150 20 300 40 Q 450 60 600 35 Q 750 10 900 40 Q 1050 60 1200 35 L1200 60 L0 60 Z" opacity="0.5" />
-        </svg>
-      </div>
       <CTASection />
       <GoogleSignInModal
         open={showSignInModal}

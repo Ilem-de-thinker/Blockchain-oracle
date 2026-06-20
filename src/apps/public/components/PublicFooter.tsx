@@ -36,7 +36,7 @@ const PublicFooter: React.FC = () => (
 
         {[
           { title: 'Platform', links: [{ name: 'Courses', to: '/courses' }, { name: 'Events', to: '/events' }, { name: 'Community', to: '/community' }, { name: 'Certifications', to: '/dashboard/certificates' }] },
-          { title: 'Company', links: [{ name: 'About', to: '/about' }, { name: 'Enterprise', to: '/enterprise', badge: 'Coming Soon' }] },
+          { title: 'Company', links: [{ name: 'About', to: '/about' }, { name: 'Enterprise', to: '/enterprise' }] },
           { title: 'Support', links: [{ name: 'Contact', to: '/contact' }, { name: 'Verify Certificate', to: '/verify-certificate' }, { name: 'Privacy Policy', to: '/privacy' }, { name: 'Terms of Service', to: '/terms' }] },
         ].map((col, i) => (
           <div key={i}>

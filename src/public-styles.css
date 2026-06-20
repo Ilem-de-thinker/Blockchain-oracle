@@ -55,3 +55,47 @@ body[data-page-type="public"] select:focus {
   border-color: #7c3aed;
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
 }
+
+/* ---- Infinite horizontal scroll for brand logos ---- */
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-scroll {
+  animation: scroll 40s linear infinite;
+}
+
+/* ---- Vertical scrolling testimonial columns ---- */
+@keyframes scrollVerticalUp {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+@keyframes scrollVerticalDown {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+.vertical-scroll-up {
+  animation: scrollVerticalUp 30s linear infinite;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.vertical-scroll-down {
+  animation: scrollVerticalDown 30s linear infinite;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.vertical-scroll-up:hover,
+.vertical-scroll-down:hover {
+  animation-play-state: paused;
+}
+
+/* ---- Pulse dot ---- */
+.pulse-dot {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}

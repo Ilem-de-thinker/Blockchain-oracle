@@ -204,6 +204,32 @@ export const eventsApi = {
   },
 
   /**
+   * Get upcoming events (date >= now)
+   */
+  getUpcomingEvents: async (page?: number, pageSize?: number, type?: string): Promise<EventListResponse> => {
+    const params = new URLSearchParams();
+    if (page) params.append('page', page.toString());
+    if (pageSize) params.append('page_size', pageSize.toString());
+    if (type) params.append('type', type);
+
+    const response = await apiClient.get(`/api/events/upcoming/?${params.toString()}`);
+    return normalizeEventListResponse(response.data);
+  },
+
+  /**
+   * Get past events (date < now)
+   */
+  getPastEvents: async (page?: number, pageSize?: number, type?: string): Promise<EventListResponse> => {
+    const params = new URLSearchParams();
+    if (page) params.append('page', page.toString());
+    if (pageSize) params.append('page_size', pageSize.toString());
+    if (type) params.append('type', type);
+
+    const response = await apiClient.get(`/api/events/past/?${params.toString()}`);
+    return normalizeEventListResponse(response.data);
+  },
+
+  /**
    * Get specific event by ID
    */
   getEvent: async (id: number): Promise<Event | null> => {
